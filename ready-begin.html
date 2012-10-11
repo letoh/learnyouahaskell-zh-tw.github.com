@@ -80,7 +80,7 @@ True  </pre><p>那執行<code>5+"llama"</code>或者<code>5==True</code>會怎
 arising from a use of `+' at :1:0-9  
 Possible fix: add an instance declaration for (Num [Char])  
 In the expression: 5 + "llama"  
-In the definition of `it': it = 5 + "llama"  </pre><p>這邊GHCi 提示說"llama"並不是數值型別，所以它不知道該怎樣才能給它加上5。即便是“four”甚至是“4”也不可以，Haskel不拿它當數值。執行<code>True==5</code>, ghci就會提示型別不匹配。<code>+</code>運算子要求兩端都是數值，而<code>==</code>運算子僅對兩個可比較的值可用。這就要求他們的型別都必須一致，蘋果和橘子就無法做比較。我們會在後面深入地理解型別的概念。Note:<code>5+4.0</code>是可以執行的，5既可以做被看做整數也可以被看做浮點數，但4.0則不能被看做整數。</p><img src="img/ringring.png" style="float:right"></img><p>也許你並未察覺，不過從始至終我們一直都在使用函數。<code>*</code>就是一個將兩個數相乘的函數，就像三明治一樣，用兩個參數將它夾在中央，這被稱作中綴函數。而其他大多數不能與數夾在一起的函數則被稱作前綴函數。絶大部分函數都是前綴函數，在接下來我們就不多做區別。大多數命令式程式語言中的函數呼叫形式通常就是函數名，括號，由逗號分隔的參數列。而在Haskell中，函數呼叫的形式是函數名，空格，空格分隔的參數列。簡單據個例子，我們呼叫Haskell中最無趣的函數：</p><pre class="code">ghci> succ 8  
+In the definition of `it': it = 5 + "llama"  </pre><p>這邊GHCi 提示說"llama"並不是數值型別，所以它不知道該怎樣才能給它加上5。即便是“four”甚至是“4”也不可以，Haskell不拿它當數值。執行<code>True==5</code>, ghci就會提示型別不匹配。<code>+</code>運算子要求兩端都是數值，而<code>==</code>運算子僅對兩個可比較的值可用。這就要求他們的型別都必須一致，蘋果和橘子就無法做比較。我們會在後面深入地理解型別的概念。Note:<code>5+4.0</code>是可以執行的，5既可以做被看做整數也可以被看做浮點數，但4.0則不能被看做整數。</p><img src="img/ringring.png" style="float:right"></img><p>也許你並未察覺，不過從始至終我們一直都在使用函數。<code>*</code>就是一個將兩個數相乘的函數，就像三明治一樣，用兩個參數將它夾在中央，這被稱作中綴函數。而其他大多數不能與數夾在一起的函數則被稱作前綴函數。絶大部分函數都是前綴函數，在接下來我們就不多做區別。大多數命令式程式語言中的函數呼叫形式通常就是函數名，括號，由逗號分隔的參數列。而在Haskell中，函數呼叫的形式是函數名，空格，空格分隔的參數列。簡單據個例子，我們呼叫Haskell中最無趣的函數：</p><pre class="code">ghci> succ 8  
 9  </pre><p>succ函數返回一個數的後繼（successor）。而且如你所見，在Haskell中是用空格來將函數與參數分隔的。至於呼叫多個參數的函數也很容易，min和max接受兩個可比較大小的參數，並返回較大或者較小的那個數。</p><pre class="code">ghci> min 9 10  
 9  
 ghci> min 3.4 3.2  
