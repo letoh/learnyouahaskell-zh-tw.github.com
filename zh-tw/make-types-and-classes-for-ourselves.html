@@ -189,7 +189,7 @@ GT
 ghci> True > False  
 True  
 ghci> True 
-False</pre><p>在Maybe a數據型別中，值構造子Nothing在Just值構造子前面，所以一個<code>Nothing</code>總要比<code>Just something</code>的值小。即便這個<code>something</code>是<code>100000000</code>也是如此。</p><pre class="code">ghci> Nothing 
+False</pre><p>在Maybe a數據型別中，值構造子Nothing在Just值構造子前面，所以一個<code>Nothing</code>總要比<code>Just something</code>的值小。即便這個<code>something</code>是<code>-100000000</code>也是如此。</p><pre class="code">ghci> Nothing 
 True  
 ghci> Nothing > Just (-49999)  
 False  
