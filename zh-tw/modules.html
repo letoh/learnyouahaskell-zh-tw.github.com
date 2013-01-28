@@ -4,16 +4,16 @@
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
         <style>
-            @import url(/css/style.css);
-            @import url(/css/feedback.css);
+            @import url(../css/style.css);
+            @import url(../css/feedback.css);
         </style>
-        <script src="/js/jquery.js"></script>
-        <script src="/js/jquery.chili-2.2.js"></script>
-        <script src="/js/script.js"></script>
-        <script src="/js/html2canvas.js"></script>
-        <script src="/js/jsfeedback.js"></script>
+        <script src="../js/jquery.js"></script>
+        <script src="../js/jquery.chili-2.2.js"></script>
+        <script src="../js/script.js"></script>
+        <script src="../js/html2canvas.js"></script>
+        <script src="../js/jsfeedback.js"></script>
         <script>
-             ChiliBook.recipeFolder = "/js/chili/";  
+             ChiliBook.recipeFolder = "../js/chili/";  
              ChiliBook.automaticSelector = "pre";
         </script>
         <script>
@@ -38,16 +38,16 @@
     </head>
     <body>
         <div id="header">
-            <img id="beta" alt="beta" src="/img/beta.png" />
+            <img id="beta" alt="beta" src="../img/beta.png" />
         </div>
 
         <div id="main">
             <ul class="nav">
-                <li class="left">  <img src="/img/prv.png"></img><a href="high-order-function.html">高階函數</a></li>
+                <li class="left">  <img src="../img/prv.png"></img><a href="high-order-function.html">高階函數</a></li>
                 <li class="center"><a href="chapters.html">Index</a></li>
-                <li class="right"> <a href="make-types-and-classes-for-ourselves.html">構造我們自己的 Types 和 Typeclasses</a><img src="/img/nxt.png"></img></li>
+                <li class="right"> <a href="make-types-and-classes-for-ourselves.html">構造我們自己的 Types 和 Typeclasses</a><img src="../img/nxt.png"></img></li>
             </ul>
-            <a name="模組 (Modules)"></a><h1>模組 (Modules)</h1><a name="裝載模組"></a><h2>裝載模組</h2><img src="/img/modules.png" style="float:right"></img><p>Haskell 中的模組是含有一組相關的函數，型別和型別類的組合。而 Haskell 程序的本質便是從主模組中引用其它模組並呼叫其中的函數來執行操作。這樣可以把程式碼分成多塊，只要一個模組足夠的獨立，它裡面的函數便可以被不同的程序反覆重用。這就讓不同的程式碼各司其職，提高了程式碼的健壯性。</p><p>Haskell 的標準庫就是一組模組，每個模組都含有一組功能相近或相關的函數和型別。有處理 List 的模組，有處理並發的模組，也有處理複數的模組，等等。目前為止我們談及的所有函數,型別以及型別類都是<code>Prelude</code>模組的一部分，它預設自動裝載。在本章，我們看一下幾個常用的模組，在開始瀏覽其中的函數之前，我們先得知道如何裝載模組.</p><p>在 Haskell中，裝載模組的語法為<code>import</code>，這必須得在函數的定義之前，所以一般都是將它置於程式碼的頂部。無疑，一段程式碼中可以裝載很多模組，只要將<code>import</code>語句分行寫開即可。裝載<code>Data.List</code>試下，它裡面有很多實用的 List 處理函數.</p><p>執行<code>import Data.List</code>，這樣一來<code>Data.List</code>中包含的所有函數就都進入了全局命名空間。也就是說，你可以在程式碼的任意位置呼叫這些函數.<code>Data.List</code>模組中有個<code>nub</code>函數，它可以篩掉一個 List 中的所有重複元素。用點號將<code>length</code>和<code>nub</code>組合:<code>length 。nub</code>，即可得到一個與<code>(\xs -> length (nub xs))</code>等價的函數。</p><pre class="code">import Data.List  
+            <a name="模組 (Modules)"></a><h1>模組 (Modules)</h1><a name="裝載模組"></a><h2>裝載模組</h2><img src="../img/modules.png" style="float:right"></img><p>Haskell 中的模組是含有一組相關的函數，型別和型別類的組合。而 Haskell 程序的本質便是從主模組中引用其它模組並呼叫其中的函數來執行操作。這樣可以把程式碼分成多塊，只要一個模組足夠的獨立，它裡面的函數便可以被不同的程序反覆重用。這就讓不同的程式碼各司其職，提高了程式碼的健壯性。</p><p>Haskell 的標準庫就是一組模組，每個模組都含有一組功能相近或相關的函數和型別。有處理 List 的模組，有處理並發的模組，也有處理複數的模組，等等。目前為止我們談及的所有函數,型別以及型別類都是<code>Prelude</code>模組的一部分，它預設自動裝載。在本章，我們看一下幾個常用的模組，在開始瀏覽其中的函數之前，我們先得知道如何裝載模組.</p><p>在 Haskell中，裝載模組的語法為<code>import</code>，這必須得在函數的定義之前，所以一般都是將它置於程式碼的頂部。無疑，一段程式碼中可以裝載很多模組，只要將<code>import</code>語句分行寫開即可。裝載<code>Data.List</code>試下，它裡面有很多實用的 List 處理函數.</p><p>執行<code>import Data.List</code>，這樣一來<code>Data.List</code>中包含的所有函數就都進入了全局命名空間。也就是說，你可以在程式碼的任意位置呼叫這些函數.<code>Data.List</code>模組中有個<code>nub</code>函數，它可以篩掉一個 List 中的所有重複元素。用點號將<code>length</code>和<code>nub</code>組合:<code>length 。nub</code>，即可得到一個與<code>(\xs -> length (nub xs))</code>等價的函數。</p><pre class="code">import Data.List  
   
 numUniques :: (Eq a) => [a] -> Int  
 numUniques = length 。nub</pre><p>你也可以在 ghci 中裝載模組，若要呼叫<code>Data.List</code>中的函數，就這樣:</p><pre class="code">ghci> :m Data.List</pre><p>若要在 ghci 中裝載多個模組，不必多次<code>:m</code>命令，一下就可以全部搞定:</p><pre class="code">ghci> :m Data.List Data.Map Data.Set</pre><p>而你的程序中若已經有包含的程式碼，就不必再用<code>:m</code>了.</p><p>如果你只用得到某模組的兩個函數，大可僅包含它倆。若僅裝載<code>Data.List</code>模組<code>nub</code>和<code>sort</code>，就這樣:</p><pre class="code">import Data.List (nub，sort)</pre><p>也可以只包含除去某函數之外的其它函數，這在避免多個模組中函數的命名衝突很有用。假設我們的程式碼中已經有了一個叫做<code>nub</code>的函數，而裝入<code>Data.List</code>模組時就要把它裡面的<code>nub</code>除掉.</p><pre class="code">import Data.List hiding (nub)</pre><p>避免命名衝突還有個方法，便是<code>qualified import</code>，<code>Data.Map</code>模組提供一了一個按鍵索值的資料結構，它裡面有幾個和<code>Prelude</code>模組重名的函數。如<code>filter</code>和<code>null</code>，裝入<code>Data.Map</code>模組之後再呼叫<code>filter</code>，Haskell 就不知道它究竟是哪個函數。如下便是解決的方法:</p><pre class="code">import qualified Data.Map</pre><p>這樣一來，再呼叫<code>Data.Map</code>中的<code>filter</code>函數，就必須得<code>Data.Map.filter</code>，而<code>filter</code>依然是為我們熟悉喜愛的樣子。但是要在每個函數前面都加<code>個Data.Map</code>實在是太煩人了! 那就給它起個別名，讓它短些:</p><pre class="code">import qualified Data.Map as M</pre><p>好，再呼叫<code>Data.Map</code>模組的<code>filter</code>函數的話僅需<code>M.filter</code>就行了</p><p>要瀏覽所有的標準庫模組，參考這個手冊。翻閲標準庫中的模組和函數是提升個人 Haskell 水平的重要途徑。你也可以各個模組的原始碼，這對 Haskell 的深入學習及掌握都是大有好處的.</p><p>檢索函數或搜尋函數位置就用<a href="http://www.Haskell.org/hoogle/">Hoogle</a>，相當了不起的 Haskell 搜索引擎! 你可以用函數名，模組名甚至型別聲明來作為檢索的條件.</p><a name="Data.List"></a><h2>Data.List</h2><p>顯而易見，<code>Data.List</code>是關於 List 操作的模組，它提供了一組非常有用的 List 處理函數。在前面我們已經見過了其中的幾個函數(如<code>map</code>和<code>filter</code>)，這是<code>Prelude</code>模組出於方便起見，導出了幾個<code>Data.List</code>裡的函數。因為這幾個函數是直接引用自<code>Data.List</code>，所以就無需使用<code>qulified import</code>。在下面，我們來看看幾個以前沒見過的函數:</p><p><strong>intersperse</strong>取一個元素與 List 作參數，並將該元素置於 List 中每對元素的中間。如下是個例子:</p><pre class="code">ghci> intersperse '.' "MONKEY"  
@@ -60,7 +60,7 @@ ghci> intercalate [0,0,0] [[1,2,3],[4,5,6],[7,8,9]]
 [[1,4,7],[2,5,8],[3,6,9]]  
 ghci> transpose ["hey","there","guys"]  
 ["htg","ehu","yey","rs","e"]</pre><p>假如有兩個多項式<code>3x<sup>2</sup> + 5x + 9</code>，<code>10x<sup>3</sup> + 9</code>和<code>8x<sup>3</sup> + 5x<sup>2</sup> + x - 1</code>，將其相加，我們可以列三個 List:<code>[0,3,5,9]</code>，<code>[10,0,0,9]</code>和<code>[8,5,1,-1]</code>來表示。再用如下的方法取得結果.</p><pre class="code">ghci> map sum $ transpose [[0,3,5,9],[10,0,0,9],[8,5,1,-1]]  
-[18,8,6,17]</pre><img src="/img/legolists.png" style="float:left"></img><p>使用<code>transpose</code>處理這三個 List 之後，三次冪就倒了第一行，二次冪到了第二行，以此類推。在用<code>sum</code>函數將其映射，即可得到正確的結果。</p><p><strong>foldl'</strong>和<strong>foldl1'</strong>是它們各自惰性實現的嚴格版本。在用<code>fold</code>處理較大的 List 時，經常會遇到堆棧溢出的問題。而這罪魁禍首就是<code>fold</code>的惰性: 在執行<code>fold</code>時，累加器的值並不會被立即更新，而是做一個"在必要時會取得所需的結果"的承諾。每過一遍累加器，這一行為就重複一次。而所有的這堆"承諾"最終就會塞滿你的堆棧。嚴格的<code>fold</code>就不會有這一問題，它們不會作"承諾"，而是直接計算中間值的結果並繼續執行下去。如果用惰性<code>fold</code>時經常遇到溢出錯誤，就應換用它們的嚴格版。</p><p><strong>concat</strong>把一組 List 連接為一個 List。</p><pre class="code">ghci> concat ["foo","bar","car"]  
+[18,8,6,17]</pre><img src="../img/legolists.png" style="float:left"></img><p>使用<code>transpose</code>處理這三個 List 之後，三次冪就倒了第一行，二次冪到了第二行，以此類推。在用<code>sum</code>函數將其映射，即可得到正確的結果。</p><p><strong>foldl'</strong>和<strong>foldl1'</strong>是它們各自惰性實現的嚴格版本。在用<code>fold</code>處理較大的 List 時，經常會遇到堆棧溢出的問題。而這罪魁禍首就是<code>fold</code>的惰性: 在執行<code>fold</code>時，累加器的值並不會被立即更新，而是做一個"在必要時會取得所需的結果"的承諾。每過一遍累加器，這一行為就重複一次。而所有的這堆"承諾"最終就會塞滿你的堆棧。嚴格的<code>fold</code>就不會有這一問題，它們不會作"承諾"，而是直接計算中間值的結果並繼續執行下去。如果用惰性<code>fold</code>時經常遇到溢出錯誤，就應換用它們的嚴格版。</p><p><strong>concat</strong>把一組 List 連接為一個 List。</p><pre class="code">ghci> concat ["foo","bar","car"]  
 "foobarcar"  
 ghci> concat [[3,4,5],[2,3,4],[2,1,1]]  
 [3,4,5,2,3,4,2,1,1]</pre><p>它相當於移除一級嵌套。若要徹底地連接其中的元素，你得<code>concat</code>它兩次才行.</p><p><strong>concatMap</strong>函數與<code>map</code>一個 List 之後再<code>concat</code>它等價.</p><pre class="code">ghci> concatMap (replicate 4) [1..3]  
@@ -181,7 +181,7 @@ ghci> groupBy (\x y -> (x > 0) == (y > 0)) values
 f `on` g = \x y -> f (g x) (g y)</pre><p>執行<code>(==) `on` (> 0)</code>得到的函數就與<code>\x y -> (x > 0) == (y > 0)</code>基本等價。<code>on</code>與帶<code>By</code>的函數在一起會非常好用，你可以這樣寫:</p><pre class="code">ghci> groupBy ((==) `on` (> 0)) values  
 [[-4.3,-2.4,-1.2],[0.4,2.3,5.9,10.5,29.1,5.3],[-2.4,-14.5],[2.9,2.3]]</pre><p>可讀性很高! 你可以大聲念出來: 按照元素是否大於零，給它分類！</p><p>同樣，<code>sort</code>，<code>insert</code>，<code>maximum</code>和<code>min</code>都有各自的通用版本。如<code>groupBy</code>類似，<strong>sortBy</strong>，<strong>insertBy</strong>，<strong>maximumBy</strong>和<strong>minimumBy</strong>都取一個函數來比較兩個元素的大小。像<code>sortBy</code>的型別聲明為:<code>sortBy :: (a -> a -> Ordering) -> [a] -> [a]</code>。前面提過，<code>Ordering</code>型別可以有三個值,<code>LT</code>，<code>EQ</code>和<code>GT</code>。<code>compare</code>取兩個<code>Ord</code>型別類的元素作參數，所以<code>sort</code>與<code>sortBy compare</code>等價.</p><p>List 是可以比較大小的，且比較的依據就是其中元素的大小。如果按照其子 List 的長度為標準當如何? 很好，你可能已經猜到了，<code>sortBy</code>函數.</p><pre class="code">ghci> let xs = [[5,4,5,4,4],[1,2,3],[3,5,4,3],[],[2],[2,2]]  
 ghci> sortBy (compare `on` length) xs  
-[[],[2],[2,2],[1,2,3],[3,5,4,3],[5,4,5,4,4]]</pre><p>太絶了!<code>compare `on` length</code>，乖乖，這簡直就是英文! 如果你搞不清楚<code>on</code>在這裡的原理，就可以認為它與<code>\x y -> length x `compare` length y</code>等價。通常，與帶<code>By</code>的函數打交道時，若要判斷相等性，則<code>(==) `on` something</code>。若要判定大小，則<code>compare `on` something</code>.</p><a name="Data.Char"></a><h2>Data.Char</h2><p>如其名，<code>Data.Char</code>模組包含了一組用於處理字元的函數。由於字串的本質就是一組字元的 List，所以往往會在<code>filter</code>或是<code>map</code>字串時用到它.</p><p><code>Data.Char</code>模組中含有一系列用於判定字元範圍的函數，如下:</p><img src="/img/legochar.png" style="float:right"></img><p><strong>isControl</strong>判斷一個字元是否是控制字元。</p><p><strong>isSpace</strong>判斷一個字元是否是空格字元，包括空格，tab，換行符等.</p><p><strong>isLower</strong>判斷一個字元是否為小寫.</p><p><strong>isUper</strong>判斷一個字元是否為大寫。</p><p><strong>isAlpha</strong>判斷一個字元是否為字母.</p><p><strong>isAlphaNum</strong>判斷一個字元是否為字母或數字.</p><p><strong>isPrint</strong>判斷一個字元是否是可打印的.</p><p><strong>isDigit</strong>判斷一個字元是否為數字.</p><p><strong>isOctDigit</strong>判斷一個字元是否為八進制數字.</p><p><strong>isHexDigit</strong>判斷一個字元是否為十六進制數字.</p><p><strong>isLetter</strong>判斷一個字元是否為字母.</p><p><strong>isMark</strong>判斷是否為 unicode 注音字元，你如果是法國人就會經常用到的.</p><p><strong>isNumber</strong>判斷一個字元是否為數字.</p><p><strong>isPunctuation</strong>判斷一個字元是否為標點符號.</p><p><strong>isSymbol</strong>判斷一個字元是否為貨幣符號.</p><p><strong>isSeperater</strong>判斷一個字元是否為 unicode 空格或分隔符.</p><p><strong>isAscii</strong>判斷一個字元是否在 unicode 字母表的前 128 位。</p><p><strong>isLatin1</strong>判斷一個字元是否在 unicode 字母表的前 256 位.</p><p><strong>isAsciiUpper</strong>判斷一個字元是否為大寫的 ascii 字元.</p><p><strong>isAsciiLower</strong>判斷一個字元是否為小寫的 ascii 字元.</p><p>以上所有判斷函數的型別聲明皆為<code>Char -> Bool</code>，用到它們的絶大多數情況都無非就是過濾字串或類似操作。假設我們在寫個程序，它需要一個由字元和數字組成的用戶名。要實現對用戶名的檢驗，我們可以結合使用<code>Data.List</code>模組的<code>all</code>函數與<code>Data.Char</code>的判斷函數.</p><pre class="code">ghci> all isAlphaNum "bobby283"  
+[[],[2],[2,2],[1,2,3],[3,5,4,3],[5,4,5,4,4]]</pre><p>太絶了!<code>compare `on` length</code>，乖乖，這簡直就是英文! 如果你搞不清楚<code>on</code>在這裡的原理，就可以認為它與<code>\x y -> length x `compare` length y</code>等價。通常，與帶<code>By</code>的函數打交道時，若要判斷相等性，則<code>(==) `on` something</code>。若要判定大小，則<code>compare `on` something</code>.</p><a name="Data.Char"></a><h2>Data.Char</h2><p>如其名，<code>Data.Char</code>模組包含了一組用於處理字元的函數。由於字串的本質就是一組字元的 List，所以往往會在<code>filter</code>或是<code>map</code>字串時用到它.</p><p><code>Data.Char</code>模組中含有一系列用於判定字元範圍的函數，如下:</p><img src="../img/legochar.png" style="float:right"></img><p><strong>isControl</strong>判斷一個字元是否是控制字元。</p><p><strong>isSpace</strong>判斷一個字元是否是空格字元，包括空格，tab，換行符等.</p><p><strong>isLower</strong>判斷一個字元是否為小寫.</p><p><strong>isUper</strong>判斷一個字元是否為大寫。</p><p><strong>isAlpha</strong>判斷一個字元是否為字母.</p><p><strong>isAlphaNum</strong>判斷一個字元是否為字母或數字.</p><p><strong>isPrint</strong>判斷一個字元是否是可打印的.</p><p><strong>isDigit</strong>判斷一個字元是否為數字.</p><p><strong>isOctDigit</strong>判斷一個字元是否為八進制數字.</p><p><strong>isHexDigit</strong>判斷一個字元是否為十六進制數字.</p><p><strong>isLetter</strong>判斷一個字元是否為字母.</p><p><strong>isMark</strong>判斷是否為 unicode 注音字元，你如果是法國人就會經常用到的.</p><p><strong>isNumber</strong>判斷一個字元是否為數字.</p><p><strong>isPunctuation</strong>判斷一個字元是否為標點符號.</p><p><strong>isSymbol</strong>判斷一個字元是否為貨幣符號.</p><p><strong>isSeperater</strong>判斷一個字元是否為 unicode 空格或分隔符.</p><p><strong>isAscii</strong>判斷一個字元是否在 unicode 字母表的前 128 位。</p><p><strong>isLatin1</strong>判斷一個字元是否在 unicode 字母表的前 256 位.</p><p><strong>isAsciiUpper</strong>判斷一個字元是否為大寫的 ascii 字元.</p><p><strong>isAsciiLower</strong>判斷一個字元是否為小寫的 ascii 字元.</p><p>以上所有判斷函數的型別聲明皆為<code>Char -> Bool</code>，用到它們的絶大多數情況都無非就是過濾字串或類似操作。假設我們在寫個程序，它需要一個由字元和數字組成的用戶名。要實現對用戶名的檢驗，我們可以結合使用<code>Data.List</code>模組的<code>all</code>函數與<code>Data.Char</code>的判斷函數.</p><pre class="code">ghci> all isAlphaNum "bobby283"  
 True  
 ghci> all isAlphaNum "eddy the fish!"  
 False</pre><p>Kewl~ 免得你忘記，<code>all</code>函數取一個判斷函數和一個 List 做參數，若該 List 的所有元素都符合條件，就返回<code>True</code>.</p><p>也可以使用<code>isSpace</code>來實現<code>Data.List</code>的<code>words</code>函數.</p><pre class="code">ghci> words "hey guys its me"  
@@ -233,7 +233,7 @@ ghci> decode 5 . encode 5 $ "This is a sentence"
              ("lucille","205-2928") ,
              ("wendy","939-8282") ,
              ("penny","853-2492") ]</pre><p>不理這貌似古怪的縮進，它就是一組二元組的 List 而已。話說對關聯列表最常見的操作就是按鍵索值，我們就寫個函數來實現它。</p><pre class="code">findKey :: (Eq k) => k -> [(k,v)] -> v 
-findKey key xs = snd . head . filter (\(k,v) -> key == k) $ xs</pre><img src="/img/legomap.png" style="float:right"></img><p>簡潔漂亮。這個函數取一個鍵和 List 做參數，過濾這一 List 僅保留鍵匹配的項，並返迴首個鍵值對。但若該關聯列表中不存在這個鍵那會怎樣? 哼，那就會在試圖從空 List 中取<code>head</code>時引發一個運行時錯誤。無論如何也不能讓程序就這麼輕易地崩潰吧，所以就應該用<code>Maybe</code>型別。如果沒找到相應的鍵，就返回<code>Nothing</code>。而找到了就返回<code>Just something</code>。而這<code>something</code>就是鍵對應的值。</p><pre class="code">findKey :: (Eq k) => k -> [(k,v)] -> Maybe v 
+findKey key xs = snd . head . filter (\(k,v) -> key == k) $ xs</pre><img src="../img/legomap.png" style="float:right"></img><p>簡潔漂亮。這個函數取一個鍵和 List 做參數，過濾這一 List 僅保留鍵匹配的項，並返迴首個鍵值對。但若該關聯列表中不存在這個鍵那會怎樣? 哼，那就會在試圖從空 List 中取<code>head</code>時引發一個運行時錯誤。無論如何也不能讓程序就這麼輕易地崩潰吧，所以就應該用<code>Maybe</code>型別。如果沒找到相應的鍵，就返回<code>Nothing</code>。而找到了就返回<code>Just something</code>。而這<code>something</code>就是鍵對應的值。</p><pre class="code">findKey :: (Eq k) => k -> [(k,v)] -> Maybe v 
 findKey key [] = Nothing findKey key ((k,v):xs) = 
      if key == k then 
          Just v 
@@ -283,7 +283,7 @@ ghci> Map.lookup "patsy" $ phoneBookToMap phoneBook
 ["827-9162","943-2929","493-2928"]</pre><p>很簡潔! 它還有別的玩法，例如在遇到重複元素時，單選最大的那個值.</p><pre class="code">ghci> Map.fromListWith max [(2,3),(2,5),(2,100),(3,29),(3,22),(3,11),(4,22),(4,15)] 
 fromList [(2,100),(3,29),(4,22)]</pre><p>或是將相同鍵的值都加在一起.</p><pre class="code">ghci> Map.fromListWith (+) [(2,3),(2,5),(2,100),(3,29),(3,22),(3,11),(4,22),(4,15)] 
 fromList [(2,108),(3,62),(4,37)]</pre><p><strong>insertWith</strong>之於<code>insert</code>，恰如<code>fromListWith</code>之於<code>fromList</code>。它會將一個鍵值對插入一個<code>map</code>之中，而該<code>map</code>若已經包含這個鍵，就問問這個函數該怎麼辦。</p><pre class="code">ghci> Map.insertWith (+) 3 100 $ Map.fromList [(3,4),(5,103),(6,339)] 
-fromList [(3,104),(5,103),(6,339)]</pre><p><code>Data.Map</code>裡面還有不少函數，這個文檔中的列表就很全了.</p><a name="Data.Set"></a><h2>Data.Set</h2><img src="/img/legosets.png" style="float:right"></img><p><code>Data.Set</code>模組提供了對數學中集合的處理。集合既像 List 也像<code>Map</code>: 它裡面的每個元素都是唯一的，且內部的數據由一棵樹來組織(這和<code>Data.Map</code>模組的<code>map</code>很像)，必須得是可排序的。同樣是插入,刪除,判斷從屬關係之類的操作，使用集合要比 List 快得多。對一個集合而言，最常見的操作莫過于並集，判斷從屬或是將集合轉為 List.</p><p>由於<code>Data.Set</code>模組與<code>Prelude</code>模組和<code>Data.List</code>模組中存在大量的命名衝突，所以我們使用<code>qualified import</code></p><p>將<code>import</code>語句至于程式碼之中:</p><pre class="code">import qualified Data.Set as Set</pre><p>然後在 ghci 中裝載</p><p>假定我們有兩個字串，要找出同時存在於兩個字串的字元</p><pre class="code">text1 = "I just had an anime dream。Anime..。Reality..。Are they so different?"  
+fromList [(3,104),(5,103),(6,339)]</pre><p><code>Data.Map</code>裡面還有不少函數，這個文檔中的列表就很全了.</p><a name="Data.Set"></a><h2>Data.Set</h2><img src="../img/legosets.png" style="float:right"></img><p><code>Data.Set</code>模組提供了對數學中集合的處理。集合既像 List 也像<code>Map</code>: 它裡面的每個元素都是唯一的，且內部的數據由一棵樹來組織(這和<code>Data.Map</code>模組的<code>map</code>很像)，必須得是可排序的。同樣是插入,刪除,判斷從屬關係之類的操作，使用集合要比 List 快得多。對一個集合而言，最常見的操作莫過于並集，判斷從屬或是將集合轉為 List.</p><p>由於<code>Data.Set</code>模組與<code>Prelude</code>模組和<code>Data.List</code>模組中存在大量的命名衝突，所以我們使用<code>qualified import</code></p><p>將<code>import</code>語句至于程式碼之中:</p><pre class="code">import qualified Data.Set as Set</pre><p>然後在 ghci 中裝載</p><p>假定我們有兩個字串，要找出同時存在於兩個字串的字元</p><pre class="code">text1 = "I just had an anime dream。Anime..。Reality..。Are they so different?"  
 text2 = "The old man left his garbage can out and now his trash is all over my lawn!"</pre><p><strong>fromList</strong>函數同你想的一樣，它取一個 List 作參數並將其轉為一個集合</p><pre class="code">ghci> let set1 = Set.fromList text1  
 ghci> let set2 = Set.fromList text2  
 ghci> set1  
@@ -359,7 +359,7 @@ cuboidArea :: Float -> Float -> Float -> Float
 cuboidArea a b c = rectangleArea a b * 2 + rectangleArea a c * 2 + rectangleArea c b * 2  
 
 rectangleArea :: Float -> Float -> Float  
-rectangleArea a b = a * b</pre><img src="/img/making_modules.png" style="float:right"></img><p>標準的幾何公式。有幾個地方需要注意一下，由於立方體只是長方體的特殊形式，所以在求它面積和體積的時候我們就將它當作是邊長相等的長方體。在這裡還定義了一個<code>helper</code>函數，<code>rectangleArea</code>它可以通過長方體的兩條邊計算出長方體的面積。它僅僅是簡單的相乘而已，份量不大。但請注意我們可以在這一模組中呼叫這個函數，而它不會被導出! 因為我們這個模組只與三維圖形打交道.</p><p>當構造一個模組的時候，我們通常只會導出那些行為相近的函數，而其內部的實現則是隱蔽的。如果有人用到了<code>Geometry</code>模組，就不需要關心它的內部實現是如何。我們作為編寫者，完全可以隨意修改這些函數甚至將其刪掉，沒有人會注意到裡面的變動，因為我們並不把它們導出.</p><p>要使用我們的模組，只需:</p><pre class="code">import Geometry</pre><p>將<code>Geometry.hs</code>檔案至于用到它的程序檔案的同一目錄之下.</p><p>模組也可以按照分層的結構來組織，每個模組都可以含有多個子模組。而子模組還可以有自己的子模組。我們可以把<code>Geometry</code>分成三個子模組，而一個模組對應各自的圖形對象.</p><p>首先，建立一個<code>Geometry</code>檔案夾，注意首字母要大寫，在裡面新建三個檔案</p><p>如下就是各個檔案的內容:</p><p>sphere.hs</p><pre class="code">module Geometry.Sphere  
+rectangleArea a b = a * b</pre><img src="../img/making_modules.png" style="float:right"></img><p>標準的幾何公式。有幾個地方需要注意一下，由於立方體只是長方體的特殊形式，所以在求它面積和體積的時候我們就將它當作是邊長相等的長方體。在這裡還定義了一個<code>helper</code>函數，<code>rectangleArea</code>它可以通過長方體的兩條邊計算出長方體的面積。它僅僅是簡單的相乘而已，份量不大。但請注意我們可以在這一模組中呼叫這個函數，而它不會被導出! 因為我們這個模組只與三維圖形打交道.</p><p>當構造一個模組的時候，我們通常只會導出那些行為相近的函數，而其內部的實現則是隱蔽的。如果有人用到了<code>Geometry</code>模組，就不需要關心它的內部實現是如何。我們作為編寫者，完全可以隨意修改這些函數甚至將其刪掉，沒有人會注意到裡面的變動，因為我們並不把它們導出.</p><p>要使用我們的模組，只需:</p><pre class="code">import Geometry</pre><p>將<code>Geometry.hs</code>檔案至于用到它的程序檔案的同一目錄之下.</p><p>模組也可以按照分層的結構來組織，每個模組都可以含有多個子模組。而子模組還可以有自己的子模組。我們可以把<code>Geometry</code>分成三個子模組，而一個模組對應各自的圖形對象.</p><p>首先，建立一個<code>Geometry</code>檔案夾，注意首字母要大寫，在裡面新建三個檔案</p><p>如下就是各個檔案的內容:</p><p>sphere.hs</p><pre class="code">module Geometry.Sphere  
 ( volume  
 ，area  
 ) where  
@@ -395,9 +395,9 @@ area side = Cuboid.area side side side</pre><p>好的! 先是<code>Geometry.Sphe
 import qualified Geometry.Cuboid as Cuboid  
 import qualified Geometry.Cube as Cube</pre><p>然後就可以呼叫<code>Sphere.area</code>，<code>Sphere.volume</code>，<code>Cuboid.area</code>了，而每個函數都只計算其對應物體的面積和體積.</p><p>以後你若發現自己的程式碼體積龐大且函數眾多，就應該試着找找目的相近的函數能否裝入各自的模組，也方便日後的重用.</p>
             <ul class="nav">
-                <li class="left">  <img src="/img/prv.png"></img><a href="high-order-function.html">高階函數</a></li>
+                <li class="left">  <img src="../img/prv.png"></img><a href="high-order-function.html">高階函數</a></li>
                 <li class="center"><a href="chapters.html">Index</a></li>
-                <li class="right"> <a href="make-types-and-classes-for-ourselves.html">構造我們自己的 Types 和 Typeclasses</a><img src="/img/nxt.png"></img></li>
+                <li class="right"> <a href="make-types-and-classes-for-ourselves.html">構造我們自己的 Types 和 Typeclasses</a><img src="../img/nxt.png"></img></li>
             </ul>
         </div>
         <div id="footer">

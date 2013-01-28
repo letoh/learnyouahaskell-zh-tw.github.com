@@ -4,16 +4,16 @@
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
         <style>
-            @import url(/css/style.css);
-            @import url(/css/feedback.css);
+            @import url(../css/style.css);
+            @import url(../css/feedback.css);
         </style>
-        <script src="/js/jquery.js"></script>
-        <script src="/js/jquery.chili-2.2.js"></script>
-        <script src="/js/script.js"></script>
-        <script src="/js/html2canvas.js"></script>
-        <script src="/js/jsfeedback.js"></script>
+        <script src="../js/jquery.js"></script>
+        <script src="../js/jquery.chili-2.2.js"></script>
+        <script src="../js/script.js"></script>
+        <script src="../js/html2canvas.js"></script>
+        <script src="../js/jsfeedback.js"></script>
         <script>
-             ChiliBook.recipeFolder = "/js/chili/";  
+             ChiliBook.recipeFolder = "../js/chili/";  
              ChiliBook.automaticSelector = "pre";
         </script>
         <script>
@@ -38,16 +38,16 @@
     </head>
     <body>
         <div id="header">
-            <img id="beta" alt="beta" src="/img/beta.png" />
+            <img id="beta" alt="beta" src="../img/beta.png" />
         </div>
 
         <div id="main">
             <ul class="nav">
-                <li class="left">  <img src="/img/prv.png"></img><a href="types-and-type-classes.html">Types and Typeclasses</a></li>
+                <li class="left">  <img src="../img/prv.png"></img><a href="types-and-type-classes.html">Types and Typeclasses</a></li>
                 <li class="center"><a href="chapters.html">Index</a></li>
-                <li class="right"> <a href="recursion.html">遞迴</a><img src="/img/nxt.png"></img></li>
+                <li class="right"> <a href="recursion.html">遞迴</a><img src="../img/nxt.png"></img></li>
             </ul>
-            <a name="函數的語法"></a><h1>函數的語法</h1><a name="模式匹配 (Pattern matching)"></a><h2>模式匹配 (Pattern matching)</h2><img src="/img/pattern.png" style="float:right"></img><p>本章講的就是 Haskell 那套獨特的語法結構，先從模式匹配開始。模式匹配通過檢查數據的特定結構來檢查其是否匹配，並按模式從中取得數據。</p><p>在定義函數時，你可以為不同的模式分別定義函數本身，這就讓程式碼更加簡潔易讀。你可以匹配一切數據型別 --- 數字，字元，List，元組，等等。我們弄個簡單函數，讓它檢查我們傳給它的數字是不是 7。</p><pre class="code">lucky :: (Integral a) => a -> String  
+            <a name="函數的語法"></a><h1>函數的語法</h1><a name="模式匹配 (Pattern matching)"></a><h2>模式匹配 (Pattern matching)</h2><img src="../img/pattern.png" style="float:right"></img><p>本章講的就是 Haskell 那套獨特的語法結構，先從模式匹配開始。模式匹配通過檢查數據的特定結構來檢查其是否匹配，並按模式從中取得數據。</p><p>在定義函數時，你可以為不同的模式分別定義函數本身，這就讓程式碼更加簡潔易讀。你可以匹配一切數據型別 --- 數字，字元，List，元組，等等。我們弄個簡單函數，讓它檢查我們傳給它的數字是不是 7。</p><pre class="code">lucky :: (Integral a) => a -> String  
 lucky 7 = "LUCKY NUMBER SEVEN!"  
 lucky x = "Sorry, you're out of luck, pal!"   </pre><p>在呼叫<code>lucky</code>時，模式會從上至下進行檢查，一旦有匹配，那對應的函數體就被應用了。這個模式中的唯一匹配是參數為 7，如果不是 7，就轉到下一個模式，它匹配一切數值並將其綁定為<code>x</code>。這個函數完全可以使用<code>if</code>實現，不過我們若要個分辨 1 到 5 中的數字，而無視其它數的函數該怎麼辦？要是沒有模式匹配的話，那可得好大一棵<code>if-else</code>樹了！</p><pre class="code">sayMe :: (Integral a) => a -> String  
 sayMe 1 = "One!"  
@@ -92,7 +92,7 @@ sum' [] = 0  
 sum' (x:xs) = x + sum' xs  </pre><p>還有個東西叫做<code>as</code>模式，就是將一個名字和<code>@</code>置於模式前，可以在按模式分割什麼東西時仍保留對其整體的引用。如這個模式<code>xs@(x:y:ys)</code>，它會匹配出與<code>x:y:ys</code>對應的東西，同時你也可以方便地通過<code>xs</code>得到整個 List，而不必在函數體中重複<code>x:y:ys</code>。看下這個 quick and dirty 的例子：</p><pre class="code">capital :: String -> String  
 capital "" = "Empty string, whoops!"  
 capital all@(x:xs) = "The first letter of " ++ all ++ " is " ++ [x]  </pre><pre class="code">ghci> capital "Dracula"  
-"The first letter of Dracula is D"  </pre><p>我們使用<code>as</code>模式通常就是為了在較大的模式中保留對整體的引用，從而減少重複性的工作。</p><p>還有——你不可以在模式匹配中使用<code>++</code>。若有個模式是<code>(xs++ys)</code>，那麼這個 List 該從什麼地方分開呢？不靠譜吧。而<code>(xs++[x,y,z])</code>或只一個<code>(xs++[x])</code>或許還能說的過去，不過出於 List 的本質，這樣寫也是不可以的。</p><a name="什麼是 Guards"></a><h2>什麼是 Guards</h2><p>模式用來檢查一個值是否合適並從中取值，而 guard 則用來檢查一個值的某項屬性是否為真。咋一聽有點像是<code>if</code>語句，實際上也正是如此。不過處理多個條件分支時 guard 的可讀性要高些，並且與模式匹配契合的很好。</p><img src="/img/guards.png" style="float:right"></img><p>在講解它的語法前，我們先看一個用到 guard 的函數。它會依據你的 BMI 值 (body mass index，身體質量指數)來不同程度地侮辱你。BMI 值即為體重除以身高的平方。如果小於 18.5，就是太瘦；如果在 18.5 到 25 之間，就是正常；25 到 30 之間，超重；如果超過 30，肥胖。這就是那個函數(我們目前暫不為您計算bmi，它只是直接取一個 emi 值)。</p><pre class="code">bmiTell :: (RealFloat a) => a -> String  
+"The first letter of Dracula is D"  </pre><p>我們使用<code>as</code>模式通常就是為了在較大的模式中保留對整體的引用，從而減少重複性的工作。</p><p>還有——你不可以在模式匹配中使用<code>++</code>。若有個模式是<code>(xs++ys)</code>，那麼這個 List 該從什麼地方分開呢？不靠譜吧。而<code>(xs++[x,y,z])</code>或只一個<code>(xs++[x])</code>或許還能說的過去，不過出於 List 的本質，這樣寫也是不可以的。</p><a name="什麼是 Guards"></a><h2>什麼是 Guards</h2><p>模式用來檢查一個值是否合適並從中取值，而 guard 則用來檢查一個值的某項屬性是否為真。咋一聽有點像是<code>if</code>語句，實際上也正是如此。不過處理多個條件分支時 guard 的可讀性要高些，並且與模式匹配契合的很好。</p><img src="../img/guards.png" style="float:right"></img><p>在講解它的語法前，我們先看一個用到 guard 的函數。它會依據你的 BMI 值 (body mass index，身體質量指數)來不同程度地侮辱你。BMI 值即為體重除以身高的平方。如果小於 18.5，就是太瘦；如果在 18.5 到 25 之間，就是正常；25 到 30 之間，超重；如果超過 30，肥胖。這就是那個函數(我們目前暫不為您計算bmi，它只是直接取一個 emi 值)。</p><pre class="code">bmiTell :: (RealFloat a) => a -> String  
 bmiTell bmi  
     | bmi <= 18.5 = "You're underweight, you emo, you!"  
     | bmi <= 25.0 = "You're supposedly normal. Pffft, I bet you're ugly!"  
@@ -143,7 +143,7 @@ calcBmis xs = [bmi w h | (w, h) <- xs]
 cylinder r h = 
     let sideArea = 2 * pi * r * h  
         topArea = pi * r ^2  
-    in  sideArea + 2 * topArea  </pre><img src="/img/letitbe.png" style="float:right"></img><p><code>let</code>的格式為<code>let [bindings] in [expressions]</code>。在<code>let</code>中綁定的名字僅對<code>in</code>部分可見。<code>let</code>裡面定義的名字也得對齊到一列。不難看出，這用<code>where</code>綁定也可以做到。那麼它倆有什麼區別呢？看起來無非就是，<code>let</code>把綁定放在語句前面而<code>where</code>放在後面嘛。</p><p>不同之處在於，<code>let</code>綁定本身是個表達式，而<code>where</code>綁定則是個語法結構。還記得前面我們講if語句時提到它是個表達式，因而可以隨處安放？</p><pre class="code">ghci> [if 5 > 3 then "Woo" else "Boo", if 'a' > 'b' then "Foo" else "Bar"]  
+    in  sideArea + 2 * topArea  </pre><img src="../img/letitbe.png" style="float:right"></img><p><code>let</code>的格式為<code>let [bindings] in [expressions]</code>。在<code>let</code>中綁定的名字僅對<code>in</code>部分可見。<code>let</code>裡面定義的名字也得對齊到一列。不難看出，這用<code>where</code>綁定也可以做到。那麼它倆有什麼區別呢？看起來無非就是，<code>let</code>把綁定放在語句前面而<code>where</code>放在後面嘛。</p><p>不同之處在於，<code>let</code>綁定本身是個表達式，而<code>where</code>綁定則是個語法結構。還記得前面我們講if語句時提到它是個表達式，因而可以隨處安放？</p><pre class="code">ghci> [if 5 > 3 then "Woo" else "Boo", if 'a' > 'b' then "Foo" else "Bar"]  
 ["Woo", "Bar"]  
 ghci> 4 * (if 10 > 5 then 10 else 0) + 2  
 42</pre><p>用<code>let</code>綁定也可以實現：</p><pre class="code">ghci> 4 * (let a = 9 in a + 1) + 2  
@@ -158,7 +158,7 @@ ghci> zoot 3 9 2
 ghci> let boot x y z = x * y + z in boot 3 4 2  
 14  
 ghci> boot  
-< interactive>:1:0: Not in scope: `boot'</pre><p>你說既然<code>let</code>已經這麼好了，還要<code>where</code>幹嘛呢？嗯，<code>let</code>是個表達式，定義域限制的相當小，因此不能在多個 guard 中使用。一些朋友更喜歡<code>where</code>，因為它是跟在函數體後面，把主函數體距離型別聲明近一些會更易讀。</p><a name="Case expressions"></a><h2>Case expressions</h2><img src="/img/case.png" style="float:right"></img><p>有命令式程式語言 (C, C++, Java, etc.) 的經驗的同學一定會有所瞭解，很多命令式語言都提供了<code>case</code>語句。就是取一個變數，按照對變數的判斷選擇對應的程式碼塊。其中可能會存在一個萬能匹配以處理未預料的情況。</p><p>Haskell 取了這一概念融合其中。如其名，<code>case</code>表達式就是，嗯，一種表達式。跟<code>if..else</code>和<code>let</code>一樣的表達式。用它可以對變數的不同情況分別求值，還可以使用模式匹配。Hmm，取一個變數，對它模式匹配，執行對應的程式碼塊。好像在哪兒聽過？啊，就是函數定義時參數的模式匹配！好吧，模式匹配本質上不過就是<code>case</code>語句的語法糖而已。這兩段程式碼就是完全等價的：</p><pre class="code">head' :: [a] -> a  
+< interactive>:1:0: Not in scope: `boot'</pre><p>你說既然<code>let</code>已經這麼好了，還要<code>where</code>幹嘛呢？嗯，<code>let</code>是個表達式，定義域限制的相當小，因此不能在多個 guard 中使用。一些朋友更喜歡<code>where</code>，因為它是跟在函數體後面，把主函數體距離型別聲明近一些會更易讀。</p><a name="Case expressions"></a><h2>Case expressions</h2><img src="../img/case.png" style="float:right"></img><p>有命令式程式語言 (C, C++, Java, etc.) 的經驗的同學一定會有所瞭解，很多命令式語言都提供了<code>case</code>語句。就是取一個變數，按照對變數的判斷選擇對應的程式碼塊。其中可能會存在一個萬能匹配以處理未預料的情況。</p><p>Haskell 取了這一概念融合其中。如其名，<code>case</code>表達式就是，嗯，一種表達式。跟<code>if..else</code>和<code>let</code>一樣的表達式。用它可以對變數的不同情況分別求值，還可以使用模式匹配。Hmm，取一個變數，對它模式匹配，執行對應的程式碼塊。好像在哪兒聽過？啊，就是函數定義時參數的模式匹配！好吧，模式匹配本質上不過就是<code>case</code>語句的語法糖而已。這兩段程式碼就是完全等價的：</p><pre class="code">head' :: [a] -> a  
 head' [] = error "No head for empty lists!"  
 head' (x:_) = x  </pre><pre class="code">head' :: [a] -> a  
 head' xs = case xs of [] -> error "No head for empty lists!"  
@@ -174,9 +174,9 @@ describeList xs = "The list is " ++ what xs  
           what [x] = "a singleton list."  
           what xs = "a longer list."  </pre>
             <ul class="nav">
-                <li class="left">  <img src="/img/prv.png"></img><a href="types-and-type-classes.html">Types and Typeclasses</a></li>
+                <li class="left">  <img src="../img/prv.png"></img><a href="types-and-type-classes.html">Types and Typeclasses</a></li>
                 <li class="center"><a href="chapters.html">Index</a></li>
-                <li class="right"> <a href="recursion.html">遞迴</a><img src="/img/nxt.png"></img></li>
+                <li class="right"> <a href="recursion.html">遞迴</a><img src="../img/nxt.png"></img></li>
             </ul>
         </div>
         <div id="footer">
