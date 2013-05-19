@@ -77,7 +77,7 @@ ghci> ("Bathcat","Got outlaw name.") `applyLog` (\x -> (length x, "Applied lengt
 
 ===Monoids 的好處
 
-    請確定你了解什麼是 Monoids。
+    請確定你了解什麼是 [functors-applicative-functors-and-monoids.html#Monoids Monoids]。
 
 到目前為止 ``applyLog`` 接受 ``(a,String)`` 型態的值，但為什麼 log 一定要是 ``String`` 呢？我們使用 ``++`` 來附加新的 log，難道 ``++`` 並不能運作在任何形式的 list，而一定要限制我們在 ``String`` 上呢？我們當然可以擺脫 ``String``，我們可以如下改變他的型態：
 
