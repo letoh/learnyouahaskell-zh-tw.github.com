@@ -6,12 +6,13 @@
 
 我們也看過了 ``Maybe`` 是如何把值加上一個可能會失敗的 context。我們學習到 List Monad 是如何加進多重結果的 context。我們也了解 ``IO`` Monad 如何運作，而且我們在知道什麼是 Monad 之前就已經知道他了。
 
-在這個章節，我們會介紹一些其他的 Monad。他們可以把值變成 monadiv value，因此可以讓我們的程式更簡潔清晰。多見識幾個 Monad 也可以敏銳我們對 Monad 的直覺。
+在這個章節，我們會介紹一些其他的 Monad。他們可以把值變成 monadic value，因此可以讓我們的程式更簡潔清晰。多見識幾個 Monad 也可以敏銳我們對 Monad 的直覺。
 
-我們即將要介紹的 Monad 都包含在 ``mtl`` 這個套建中。一個 Haskell package 包含了一堆模組。而 ``mtl`` 已經包含在 Haskell Platform 中，所以你可能不用另外安裝。要檢查你有沒有這套件，你可以下 ``ghc-pkg list``。這會列出你已經安裝的套件，其中應該包含 ``mtl`` 後面接著對應的版號。
+我們即將要介紹的 Monad 都包含在 ``mtl`` 這個套件中。一個 Haskell package 包含了一堆模組。而 ``mtl`` 已經包含在 Haskell Platform 中，所以你可能不用另外安裝。要檢查你有沒有這套件，你可以下 ``ghc-pkg list``。這會列出你已經安裝的套件，其中應該包含 ``mtl`` 後面接著對應的版號。
 
 
 ==你所不知道的 Writer Monad
+
 我們已經看過 ``Maybe``, list 以及 ``IO`` Monad。現在我們要來看看 ``Writer`` Monad。
 
 相對於 ``Maybe`` 是加入可能失敗的 context，list 是加入 non-deterministic 的 context，``Writer`` 則是加進一個附加值的 context，好比 log 一般。``Writer`` 可以讓我們在計算的同時蒐集所有 log 紀錄，並匯集成一個 log 並附加在結果上。
@@ -19,15 +20,15 @@
 例如我們想要附加一個 String 好說明我們的值在幹麼（有可能是為了除錯）。想像有一個函數接受一個代表幫派人數的數字，然後會回傳值告訴我們這是否算是一個龐大的幫派：
 
 {{
-isBigGang :: Int -> Bool  
-isBigGang x = x > 9  
+isBigGang :: Int -> Bool
+isBigGang x = x > 9
 }}
 
 現在我們希望他不只是回傳 ``True`` 或 ``False``，我們還希望他能夠多回傳一個字串代表 log。這很容易，只要多加一個 ``String`` 在 ``Bool`` 旁邊就好了。
 
 {{
-isBigGang :: Int -> (Bool, String)  
-isBigGang x = (x > 9, "Compared gang size to 9.")  
+isBigGang :: Int -> (Bool, String)
+isBigGang x = (x > 9, "Compared gang size to 9.")
 }}
 
 我們現在回傳了一個 Tuple，第一個元素是原來的布林值，第二個元素是一個 String。現在我們的值有了一個 context。
@@ -43,7 +44,7 @@ ghci> isBigGang 30
 
 到目前為止都還不錯，``isBigGang`` 回傳一個值跟他的 context。對於正常的數值來說這樣的寫法都能運作良好。但如果我們想要把一個已經具有 context 的值，像是 ``(3, "Smallish gang.")``，餵給 ``isBigGang`` 呢？我們又面對了同樣的問題：如果我們有一個能接受正常數值並回傳一個具有 context 值的 function，那我們要如何餵給他一個具有 context 的值？
 
-當我們在研究 ``Maybe`` monad 的時候，我們寫了一個 ``applyMaybe``。他接受一個 ``Maybe a`` 值跟一個 ``a -> Maybe b`` 型態的函數，他會把 ``Maybe a`` 餵給這個 function，即便這個 function 其實是接受 ``a`` 而非 ``Maybe a``。``applyMaybe`` 有針對這樣的 context 做處理，也就是會留意有可能發生的失敗情況。但在 ``a -> Maybe b`` 裡面，我們可以只專心處理正常數值即可。因為 ``applyMaybe`` (之後變成了 ``>>=``)會幫我們處理需要檢查 ``Nothing`` 或 ``Just`` 的情況。
+當我們在研究 ``Maybe`` monad 的時候，我們寫了一個 ``applyMaybe``。他接受一個 ``Maybe a`` 值跟一個 ``a -> Maybe b`` 型態的函數，他會把 ``Maybe a`` 餵給這個 function，即便這個 function 其實是接受 ``a`` 而非 ``Maybe a``。``applyMaybe`` 有針對這樣的 context 做處理，也就是會留意有可能發生的失敗情況。但在 ``a -> Maybe b`` 裡面，我們可以只專心處理正常數值即可。因為 ``applyMaybe``（之後變成了 ``>>=``） 會幫我們處理需要檢查 ``Nothing`` 或 ``Just`` 的情況。
 
 我們再來寫一個接受附加 log 值的函數，也就是 ``(a, String)`` 型態的值跟 ``a -> (b, String)`` 型態的函數。我們稱呼這個函數為 ``applyLog``。這個函數有的 context 是附加 log 值，而不是一個可能會失敗的 context，因此 ``applyLog`` 會確保原有的 log 被保留，並附上從函數產生出的新的 log。這邊我們來看一下實作：
 
@@ -148,7 +149,7 @@ ghci> ("dogmeat", Sum 5) `applyLog` addDrink `applyLog` addDrink
 
 ===The Writer type
 
-我們認識了一個附加 monoid 的值其實表現出來的是一個 monad，我們來再來看看其他類似的 ``Monad`` instance。``Control.Monad.Writer`` 這模組含有 ``Writer w a`` 的一個型態，裏面定義了他 ``Monad`` 的 instance，還有一些操作這些值的函數。
+我們認識了一個附加 monoid 的值其實表現出來的是一個 monad，我們再來看看其他類似的 ``Monad`` instance。 ``Control.Monad.Writer`` 這模組含有 ``Writer w a`` 的一個型態，裏面定義了他 ``Monad`` 的 instance，還有一些操作這些值的函數。
 
 首先，我們來看一下型態。要把一個 monoid 附加給一個值，只需要定義一個 tuple 就好了。``Writer w a`` 這型態其實是一個 ``newtype`` wrapper。他的定義很簡單：
 
@@ -295,7 +296,7 @@ ghci> mapM_ putStrLn $ snd $ runWriter (gcd' 8 3)
 Finished with 1  
 }}
 
-把普通的演算法轉換成具有 log 是很棒的經驗，我們不過是把普通的 value 重寫成 Monadiv value，剩下的就靠 ``>>=`` 跟 ``Writer`` 來幫我們處理一切。用這樣的方法我們幾乎可以對任何函數加上 logging 的功能。我們只要把普通的值換成 ``Writer``，然後把一般的函數呼叫換成 ``>>=`` (當然也可以用 ``do``)
+把普通的演算法轉換成具有 log 是很棒的經驗，我們不過是把普通的 value 重寫成 Monadic value，剩下的就靠 ``>>=`` 跟 ``Writer`` 來幫我們處理一切。用這樣的方法我們幾乎可以對任何函數加上 logging 的功能。我們只要把普通的值換成 ``Writer``，然後把一般的函數呼叫換成 ``>>=`` (當然也可以用 ``do``)
 
 ===Inefficient list construction
 當製作 ``Writer`` Monad 的時候，要特別注意你是使用哪種 monoid。使用 list 的話效能有時候是沒辦法接受的。因為 list 是使用 ``++`` 來作為 ``mappend`` 的實現。而 ``++`` 在 list 很長的時候是非常慢的。
@@ -519,7 +520,7 @@ addStuff = do
   return (a+b)  
 }}
 
-這跟我們之前寫的 applicative expression 差不多，只差在他是運作在 monad 上。一個 ``do`` expression 的結果永遠會是一個 monadic vlaue，這個也不例外。而這個 monadic value 其實是一個函數。只是在這邊他接受一個數字，然後套用 ``(*2)``，把結果綁定到 ``a`` 上面。而 ``(+10)`` 也同用被套用到同樣的參數。結果被綁訂到 ``b`` 上。``return`` 就如其他 monad 一樣，只是製作一個簡單的 monadiv value 而不會作多餘的事情。這讓整個函數的結果是 ``a+b``。如果我們試著跑跑看，會得到之前的結果。
+這跟我們之前寫的 applicative expression 差不多，只差在他是運作在 monad 上。一個 ``do`` expression 的結果永遠會是一個 monadic vlaue，這個也不例外。而這個 monadic value 其實是一個函數。只是在這邊他接受一個數字，然後套用 ``(*2)``，把結果綁定到 ``a`` 上面。而 ``(+10)`` 也同用被套用到同樣的參數。結果被綁訂到 ``b`` 上。``return`` 就如其他 monad 一樣，只是製作一個簡單的 monadic value 而不會作多餘的事情。這讓整個函數的結果是 ``a+b``。如果我們試著跑跑看，會得到之前的結果。
 
 {{
 ghci> addStuff 3  
@@ -888,7 +889,7 @@ Right 103
 
 ==一些實用的 Moandic functions
 
-在這個章節，我們會看看一些操作 monadiv value 的函數。這樣的函數通常我們稱呼他們為 monadiv function。其中有些你是第一次見到，但有些不過是 ``filter`` 或 ``foldl`` 的變形。讓我們來看看吧！
+在這個章節，我們會看看一些操作 monadic value 的函數。這樣的函數通常我們稱呼他們為 monadic function。其中有些你是第一次見到，但有些不過是 ``filter`` 或 ``foldl`` 的變形。讓我們來看看吧！
 
 ===liftM 
 

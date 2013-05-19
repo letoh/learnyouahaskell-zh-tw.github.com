@@ -58,7 +58,7 @@ ghci> surface $ Rectangle 0 0 100 100
 10000.0
 }}
 
-Yay，it works！不過我們若嘗試輸出 ``Circle 10 20`` 到控制台，就會得到一個錯誤。這是因為 Haskell 還不知道該型別的字元串表示方法。想想，當我們往控制台輸出值的時候，Haskell 會先呼叫 ``show`` 函數得到這個值的字元串表示才會輸出。因此要讓我們的 ``Shape`` 型別成為 Show 型別類的成員。可以這樣修改：
+Yay，it works！不過我們若嘗試輸出 ``Circle 10 20`` 到控制台，就會得到一個錯誤。這是因為 Haskell 還不知道該型別的字串表示方法。想想，當我們往控制台輸出值的時候，Haskell 會先呼叫 ``show`` 函數得到這個值的字串表示才會輸出。因此要讓我們的 ``Shape`` 型別成為 Show 型別類的成員。可以這樣修改：
 
 {{
 data Shape = Circle Float Float Float | Rectangle Float Float Float Float deriving (Show)
@@ -292,7 +292,7 @@ ghci> Just 10 :: Maybe Double
 Just 10.0
 }}
 
-型別參數很實用。有了它，我們就可以按照我們的需要構造出不同的型別。若執行 ``:t Just "Haha"``，型別推導引擎就會認出它是個 ``Maybe [Char]``，由於 ``Just a`` 裡的 ``a`` 是個字元串，那麼 ``Maybe a`` 裡的 ``a`` 一定也是個字元串。
+型別參數很實用。有了它，我們就可以按照我們的需要構造出不同的型別。若執行 ``:t Just "Haha"``，型別推導引擎就會認出它是個 ``Maybe [Char]``，由於 ``Just a`` 裡的 ``a`` 是個字串，那麼 ``Maybe a`` 裡的 ``a`` 一定也是個字串。
 
 [$../img/meekrat.png]
 
@@ -443,7 +443,7 @@ ghci> mikeD `elem` beastieBoys
 True
 }}
 
-``Show`` 和 ``Read`` 型別類處理可與字元串相互轉換的東西。同 ``Eq`` 相似，如果一個型別的構造子含有參數，那所有參數的型別必須都得屬於 ``Show`` 或 ``Read`` 才能讓該型別成為其 instance。就讓我們的 ``Person`` 也成為 ``Read`` 和 ``Show`` 的一員吧。
+``Show`` 和 ``Read`` 型別類處理可與字串相互轉換的東西。同 ``Eq`` 相似，如果一個型別的構造子含有參數，那所有參數的型別必須都得屬於 ``Show`` 或 ``Read`` 才能讓該型別成為其 instance。就讓我們的 ``Person`` 也成為 ``Read`` 和 ``Show`` 的一員吧。
 
 {{
 data Person = Person { firstName :: String
@@ -462,9 +462,9 @@ ghci> "mikeD is: " ++ show mikeD
 "mikeD is: Person {firstName = \"Michael\", lastName = \"Diamond\", age = 43}"
 }}
 
-如果我們還沒讓 ``Person`` 型別作為 ``Show`` 的成員就嘗試輸出它，Haskell 就會向我們抱怨，說它不知道該怎麼把它表示成一個字元串。不過現在既然已經 derive 成為了 ``Show`` 的一個 instance，它就知道了。
+如果我們還沒讓 ``Person`` 型別作為 ``Show`` 的成員就嘗試輸出它，Haskell 就會向我們抱怨，說它不知道該怎麼把它表示成一個字串。不過現在既然已經 derive 成為了 ``Show`` 的一個 instance，它就知道了。
 
-``Read`` 几乎就是與 ``Show`` 相對的型別類，``show`` 是將一個值轉換成字元串，而 ``read`` 則是將一個字元串轉成某型別的值。還記得，使用 ``read`` 函數時我們必須得用型別註釋註明想要的型別，否則 Haskell 就不會知道如何轉換。
+``Read`` 几乎就是與 ``Show`` 相對的型別類，``show`` 是將一個值轉換成字串，而 ``read`` 則是將一個字串轉成某型別的值。還記得，使用 ``read`` 函數時我們必須得用型別註釋註明想要的型別，否則 Haskell 就不會知道如何轉換。
 
 {{
 ghci> read "Person {firstName =\"Michael\", lastName =\"Diamond\", age = 43}" :: Person
@@ -525,7 +525,7 @@ data Day = Monday | Tuesday | Wednesday | Thursday | Friday | Saturday | Sunday
            deriving (Eq, Ord, Show, Read, Bounded, Enum)
 }}
 
-由於它是 ``Show`` 和 ``Read`` 型別類的成員，我們可以將這個型別的值與字元串相互轉換。
+由於它是 ``Show`` 和 ``Read`` 型別類的成員，我們可以將這個型別的值與字串相互轉換。
 
 {{
 ghci> Wednesday
@@ -584,7 +584,7 @@ type String = [Char]
 
 我們已經介紹過了 ``type`` 關鍵字，這個關鍵字有一定誤導性，它並不是用來創造新類（這是 ``data`` 關鍵字做的事情），而是給一個既有型別提供一個別名。
 
-如果我們隨便搞個函數 ``toUpperString`` 或其他什麼名字，將一個字元串變成大寫，可以用這樣的型別聲明 ``toUpperString :: [Char] -> [Char]``， 也可以這樣 ``toUpperString :: String -> String``，二者在本質上是完全相同的。後者要更易讀些。
+如果我們隨便搞個函數 ``toUpperString`` 或其他什麼名字，將一個字串變成大寫，可以用這樣的型別聲明 ``toUpperString :: [Char] -> [Char]``， 也可以這樣 ``toUpperString :: String -> String``，二者在本質上是完全相同的。後者要更易讀些。
 
 在前面 ``Data.Map`` 那部分，我們用了一個關聯 ``List`` 來表示 ``phoneBook``，之後才改成的 Map。我們已經發現了，一個關聯 List 就是一組鍵值對組成的 List。再看下我們 ``phoneBook`` 的樣子：
 
@@ -606,7 +606,7 @@ phoneBook =
 type PhoneBook = [(String,String)]
 }}
 
-現在我們 ``phoneBook`` 的型別聲明就可以是 ``phoneBook :: PhoneBook`` 了。再給字元串加上別名：
+現在我們 ``phoneBook`` 的型別聲明就可以是 ``phoneBook :: PhoneBook`` 了。再給字串加上別名：
 
 {{
 type PhoneNumber = String
@@ -614,7 +614,7 @@ type Name = String
 type PhoneBook = [(Name,PhoneNumber)]
 }}
 
-Haskell 程序員給 String 加別名是為了讓函數中字元串的表達方式及用途更加明確。
+Haskell 程序員給 String 加別名是為了讓函數中字串的表達方式及用途更加明確。
 
 好的，我們實現了一個函數，它可以取一名字和號碼檢查它是否存在於電話本。現在可以給它加一個相當好看明了的型別聲明：
 
@@ -688,7 +688,7 @@ type Code = String
 type LockerMap = Map.Map Int (LockerState, Code)
 }}
 
-很簡單，我們引入了一個新的型別來表示壁櫥的占用情況。併為壁櫥密碼及按號碼找壁櫥的 Map 分別設置了一個別名。好，現在我們實現這個按號碼找壁櫥的函數，就用 ``Either String Code`` 型別表示我們的結果，因為 ``lookup`` 可能會以兩種原因失敗。櫥子已經讓別人用了或者壓根就沒有這個櫥子。如果 ``lookup`` 失敗，就用字元串表明失敗的原因。
+很簡單，我們引入了一個新的型別來表示壁櫥的占用情況。併為壁櫥密碼及按號碼找壁櫥的 Map 分別設置了一個別名。好，現在我們實現這個按號碼找壁櫥的函數，就用 ``Either String Code`` 型別表示我們的結果，因為 ``lookup`` 可能會以兩種原因失敗。櫥子已經讓別人用了或者壓根就沒有這個櫥子。如果 ``lookup`` 失敗，就用字串表明失敗的原因。
 
 {{
 lockerLookup :: Int -> LockerMap -> Either String Code
@@ -700,7 +700,7 @@ lockerLookup lockerNumber map =
                                 else Left $ "Locker " ++ show lockerNumber ++ " is already taken!"
 }}
 
-我們在這裡個 Map 中執行一次普通的 ``lookup``，如果得到一個 ``Nothing``，就返回一個 ``Left String`` 的值，告訴他壓根就沒這個號碼的櫥子。如果找到了，就再檢查下，看這櫥子是不是已經讓別人用了，如果是，就返回個 ``Left String`` 說它已經讓別人用了。否則就返回個 ``Right Code`` 的值，通過它來告訴學生壁櫥的密碼。它實際上就是個 ``Right String``，我們引入了個型別別名讓它這型別聲明更好看。
+我們在這裡個 Map 中執行一次普通的 ``lookup``，如果得到一個 ``Nothing``，就返回一個 ``Left String`` 的值，告訴他壓根就沒這個號碼的櫥子。如果找到了，就再檢查一下，看這櫥子是不是已經讓別人用了，如果是，就返回個 ``Left String`` 說它已經讓別人用了。否則就返回個 ``Right Code`` 的值，通過它來告訴學生壁櫥的密碼。它實際上就是個 ``Right String``，我們引入了個型別別名讓它這型別聲明更好看。
 
 如下是個 Map 的例子：
 
@@ -716,7 +716,7 @@ lockers = Map.fromList
     ]
 }}
 
-現在從裡面 ``lookup`` 某個櫥子號..
+現在從裡面 ``lookup`` 某個櫥子號碼..
 
 {{
 ghci> lockerLookup 101 lockers
@@ -776,7 +776,7 @@ infixr 5 :-:
 data List a = Empty | a :-: (List a) deriving (Show, Read, Eq, Ord)
 }}
 
-首先我們留意新的語法結構：fixity 宣告。當我們定義函數成 operator，我們能同時指定 fixity (但並不是必須的)。fixity 指定了他應該是 left-associative 或是 right-associative，還有他的優先順序。例如說，``*`` 的 fixity 是 ``infixl 7 *``，而 ``+`` 的 fixity 是 ``infixl 6``。代表他們都是 left-associative。``(4 * 3 * 2)`` 等於 ``((4 * 3) * 2)``。但 ``*`` 擁有比 ``+`` 更高的優先順序。所以 ``5 * 4 + 3`` 會是 ``(5 * 4) + 3``。
+首先我們留意新的語法結構：fixity 宣告。當我們定義函數成 operator，我們能同時指定 fixity (但並不是必須的)。fixity 指定了他應該是 left-associative 或是 right-associative，還有他的優先順序。例如說，``*`` 的 fixity 是 ``infixl 7 *``，而 ``+`` 的 fixity 是 ``infixl 6``。代表他們都是 left-associative （``(4 * 3 * 2)`` 等於 ``((4 * 3) * 2)``），但 ``*`` 擁有比 ``+`` 更高的優先順序。所以 ``5 * 4 + 3`` 會是 ``(5 * 4) + 3``。
 
 這樣我們就可以寫成 ``a :-: (List a)`` 而不是 ``Cons a (List a)``：
 
@@ -832,7 +832,7 @@ data Tree a = EmptyTree | Node a (Tree a) (Tree a) deriving (Show, Read, Eq)
 }}
 
 
-我們不太想手動來建顆二元搜尋樹，所以我們要來寫一個函數，他接受一棵樹還有一個元素，把這個元素安插到這棵二元搜尋樹中。當拿這個元素跟樹的節點比較結果比較小的話，我們就往左走，如果比較大，就往右走。重複這個動作直到我們走到一棵空的樹。一旦碰到空的樹的話，我們就把元素插入節點。
+我們不太想手動來建棵二元搜尋樹，所以我們要來寫一個函數，他接受一棵樹還有一個元素，把這個元素安插到這棵二元搜尋樹中。當拿這個元素跟樹的節點比較結果比較小的話，我們就往左走，如果比較大，就往右走。重複這個動作直到我們走到一棵空的樹。一旦碰到空的樹的話，我們就把元素插入節點。
 
 在 C 語言中，我們是用修改指標的方式來達成這件事。但在 Haskell 中，我們沒辦法修改我們的樹。所以我們在決定要往左或往右走的時候就做一棵新的子樹，走到最後要安插節點的時候也是做一棵新的樹。因此我們插入函數的型態會是 ``a -> Tree a -> Tree a``。他接受一個元素跟一棵樹，並回傳一棵包含了新元素的新的樹。這看起來很沒效率的樣子，但別擔心，惰性的特性可以讓我們不用擔心這個。
 

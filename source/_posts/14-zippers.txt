@@ -184,7 +184,7 @@ goRight :: (Tree a, Breadcrumbs a) -> (Tree a, Breadcrumbs a)
 goRight (Node x l r, bs) = (r, RightCrumb x l:bs)  
 }}
 
-在之前我們只能向左或向右走，現在我們由於紀錄了關於父節點的資訊以及我們選擇不走的路的資訊，而獲得向上走的能力。來看看 ``goUp`` 函數：
+在之前我們只能向左或向右走，現在我們透過紀錄了父節點的資訊，以及我們尚未走過的路徑資訊，而獲得向上走的能力。來看看 ``goUp`` 函數：
 
 {{
 goUp :: (Tree a, Breadcrumbs a) -> (Tree a, Breadcrumbs a)  
