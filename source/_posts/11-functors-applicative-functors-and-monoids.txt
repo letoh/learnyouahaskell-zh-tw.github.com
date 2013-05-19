@@ -1046,6 +1046,7 @@ newtype CharList = CharList { getCharList :: [Char] }
 
 ==Monoids
 
+[$../img/pirateship.png]
 
 Haskell 中 typeclass 是用來表示一個型別之間共有的行為，是一種 interace。我們介紹過 ``Eq``，他定義型別是否可以比較相等性，以及 ``Ord``，他表示可以被排序的型別。還介紹了更有趣的像是 ``Functor`` 跟 ``Applicative``。
 
