@@ -1048,24 +1048,24 @@ newtype CharList = CharList { getCharList :: [Char] }
 
 [$../img/pirateship.png]
 
-Haskell 中 typeclass 是用來表示一個型別之間共有的行為，是一種 interace。我們介紹過 ``Eq``，他定義型別是否可以比較相等性，以及 ``Ord``，他表示可以被排序的型別。還介紹了更有趣的像是 ``Functor`` 跟 ``Applicative``。
+Haskell 中的 typeclass 是用來表示具備共同行為的型別的界面。我們介紹過 ``Eq``，他定義型別是否可以比較相等性，以及 ``Ord``，他表示可以被排序的型別。還介紹了更有趣的像是 ``Functor`` 跟 ``Applicative``。
 
 
-當我們定義一個型別時，我們會想說他應該要支援的行為。也就是表現的行為是什麽，並且要讓他屬於哪些 typeclass。如果希望他可以比較相等與否，那我們就應該定義他成為 ``Eq`` 的一個 instance。如果我們想要看看型別是否是一種 functor，我們可以定義他是 ``Functor`` 的一個 instance。以此類推。
+當我們定義一個型別時，我們會想說他應該要支援的行為，也就是表現的行為是什麽，並且要讓他屬於哪些 typeclass。如果希望他可以比較相等與否，那我們就應該定義他成為 ``Eq`` 的一個 instance。如果我們想要看看型別是否是一種 functor，我們可以定義他是 ``Functor`` 的一個 instance。以此類推。
 
 
 考慮 ``*`` 是一個將兩個數值相乘的一個函數。如果我們將一個數值乘上 ``1``，那就會得到自身的數值。我們實際上是做 ``1 * x`` 或 ``x * 1`` 並沒有差別。結果永遠會是 ``x``。同樣的，``++`` 是一個接受兩個參數並回傳新的值的一個函數。只是他不是相乘而是將兩個 list 接在一起。而類似 ``*``，他也有一個特定的值，當他跟其他值使用 ``++`` 時會得到同樣的值。那個值就是空的 list ``[]``。
 
 
 {{
-ghci> 4 * 1  
-4  
-ghci> 1 * 9  
-9  
-ghci> [1,2,3] ++ []  
-[1,2,3]  
-ghci> [] ++ [0.5, 2.5]  
-[0.5,2.5]  
+ghci> 4 * 1
+4
+ghci> 1 * 9
+9
+ghci> [1,2,3] ++ []
+[1,2,3]
+ghci> [] ++ [0.5, 2.5]
+[0.5,2.5]
 }}
 
 看起來 ``*`` 之於 ``1`` 跟 ``++`` 之於 ``[]`` 有類似的性質：
@@ -1074,30 +1074,30 @@ ghci> [] ++ [0.5, 2.5]
     # 參數跟回傳值是同樣的型別
     # 同樣存在某些值當套用二元函數時並不會改變其他值
 
-關於這兩種操作還有另一個比較難察覺的性質就是，當我們對這個二元函數對三個以上的值操作並化見，函數套用的順序並不會影響到結果。不論是 ``(3 * 4) * 5`` 或是 ``3 * (4 * 5)``？兩種方式都會得到 ``60``。而 ``++`` 也是相同的。
+關於這兩種操作還有另一個比較難察覺的性質：當我們以這個二元函數對三個以上的值操作並化簡到只剩下一個計算結果，函數套用的順序並不會影響到結果。不論是 ``(3 * 4) * 5`` 或是 ``3 * (4 * 5)``？兩種方式都會得到 ``60``。而 ``++`` 也是相同的。
 
 {{
-ghci> (3 * 2) * (8 * 5)  
-240  
-ghci> 3 * (2 * (8 * 5))  
-240  
-ghci> "la" ++ ("di" ++ "da")  
-"ladida"  
-ghci> ("la" ++ "di") ++ "da"  
-"ladida"  
+ghci> (3 * 2) * (8 * 5)
+240
+ghci> 3 * (2 * (8 * 5))
+240
+ghci> "la" ++ ("di" ++ "da")
+"ladida"
+ghci> ("la" ++ "di") ++ "da"
+"ladida"
 }}
 
-我們稱呼這樣的性質為結合律(associativity)。``*`` 遵守結合律，``++`` 也是。但 ``-`` 就不遵守。``(5 - 3) - 4`` 跟 ``5 - (3 - 4)`` 得到的結果是不同的。
+我們稱呼這樣的性質為結合律（associativity）。``*`` 遵守結合律，``++`` 也是。但 ``-`` 就不遵守。``(5 - 3) - 4`` 跟 ``5 - (3 - 4)`` 得到的結果是不同的。
 
 
-注意到這些性質並具體地寫下來，就可以得到 monoid。一個 monoid 是你有一個遵守結合綠的二元函數還有一個可以相對於那個函數作為 identity 的值。當某個值相對於一個函數是一個 identity，他表示當我們將這個值丟給函數時，結果永遠會是另外一邊的那個值本身。``1`` 是相對於 ``*`` 的 identity，而 ``[]`` 是相對於 ``++`` 的 identity。在 Haskell 中還有許多其他的 monoid，這也是為什麽我們定義了 ``Monoid`` 這個 typeclass。他描述了表現成 monoid 的那些型別。我們來看看這個 typeclass 是怎麼被定義的：
+注意到這些性質並具體地寫下來，就可以得到 monoid。Monoid 指的是一個遵守結合律的二元函數，還有一個相對於那個函數可以作為 identity 的值。當某個值相對於一個函數是一個 identity，表示將這個值丟給函數時，結果永遠會是那個值本身。``1`` 是相對於 ``*`` 的 identity，而 ``[]`` 是相對於 ``++`` 的 identity。在 Haskell 中還有許多其他的 monoid，這也是為什麽我們定義了 ``Monoid`` 這個 typeclass。他描述了行為像是 monoid 的那些型別。我們來看看這個 typeclass 是怎麼被定義的：
 
 {{
-class Monoid m where  
-    mempty :: m  
-    mappend :: m -> m -> m  
-    mconcat :: [m] -> m  
-    mconcat = foldr mappend mempty  
+class Monoid m where
+    mempty :: m
+    mappend :: m -> m -> m
+    mconcat :: [m] -> m
+    mconcat = foldr mappend mempty
 }}
 
 [$../img/balloondog.png]
@@ -1105,20 +1105,20 @@ class Monoid m where
 ``Monoid`` typeclass 被定義在 ``import Data.Monoid`` 中。我們來花些時間好好瞭解他。
 
 
-首先我們看到只有具體型別才能定義成 ``Monoid`` 的 instance。由於在 typeclass 定義中的 ``m`` 並不接受任何型別參數。這跟 ``Functor`` 以及 ``Applicative`` 不同，他們要求他們的 instance 必須是一個接受單一型別參數的型別構造子。
+首先我們看到只有具體型別才能定義成 ``Monoid`` 的 instance。由於在 typeclass 定義中的 ``m`` 並不接受任何型別參數。這跟要求 instance 必須是一個接受單一型別參數的型別構造子的 ``Functor`` 以及 ``Applicative`` 不同。
 
 
 第一個函數是 ``mempty``，由於他不接受任何參數，所以他並不是一個函數，而是一個 polymorphic 的常數。有點像是 ``Bounded`` 中的 ``minBound`` 一樣。``mempty`` 表示一個特定 monoid 的 identity。
 
 
-再來我們看到 ``mappend``，你可能已經猜到，他是一個接受兩個相同型別的值的二元函數，並回傳同樣的型別。不過要注意的是他的名字不太符合他真正的意思，他的名字隱含了我們要將兩個東西接在一起。儘管在 list 的情況下 ``++`` 的確將兩個 list 接起來，但 ``*`` 則否。他只不過將兩個數值做相乘。當我們再看到其他 ``Monoid`` 的 instance 時，我們會看到他們大部分都沒有接起來的做，所以不要用接起來的概念來想像 ``mappend``，只要想像他們是接受兩個 monoid 的值並回傳另外一個就好了。
+再來我們看到 ``mappend``，你可能已經猜到，他是一個接受兩個相同型別的值的二元函數，並回傳同樣的型別。不過要注意的是他的名字不太符合他真正的意思，他的名字隱含了我們要將兩個東西接在一起。儘管在 list 的情況下 ``++`` 的確將兩個 list 接起來，但 ``*`` 則否。他只不過將兩個數值做相乘。當我們再看到其他 ``Monoid`` 的 instance 時，我們會看到他們大部分都沒有接起來的動作，所以不要用接起來的概念來理解 ``mappend``，只要當他是一個能接受兩個 monoid 的值並回傳另外一個的二元函數就好了。
 
 
-在 typeclass 定義中的最後一個函數是 ``mconcat``。他接受一串 monoid 值，並將他們用 ``mappend`` 簡化成單一的值。他有一個預設的實作，就是從 ``mempty`` 作為起始值，然後用 ``mappend`` 來 fold。由於對於大部分的 instance 預設的實作就沒什麼問題，我們不會想要實作自己的 ``mconcat``。當我們定義一個型別屬於 ``Monoid`` 的時候，多半實作 ``mempty`` 跟 ``mappend`` 就可以了。而 ``mconcat`` 就是因為對於一些 instance，有可能有比較有效率的方式來實作 ``mconcat``。不過大多數情況都不需要。
+在 typeclass 定義中的最後一個函數是 ``mconcat``。他接受一串 monoid 值，並將他們用 ``mappend`` 簡化成單一的值。他有一個預設的實作，就是從 ``mempty`` 作為起始值，然後用 ``mappend`` 來 fold。由於對於大部分的 instance 預設的實作就沒什麼問題，我們不會想要實作自己的 ``mconcat``。當我們定義一個型別屬於 ``Monoid`` 的時候，多半實作 ``mempty`` 跟 ``mappend`` 就可以了。而 ``mconcat`` 只是因為對於某些 instance 來說可能有比較有效率的實作，但大多數情況用預設實作就夠了。
 
 
 
-在我們繼續接下去看幾個 ``Monoid`` 的例子前，我們來看一下 monoid law。我們提過必須有一個值作為 identity 以及一個遵守結合律的二元函數當作前提。我們是可以定義一個 ``Monoid`` 的 instance 卻不遵守這些定律的，但這樣寫出來的 instance 就沒有用了，因為我們在使用 ``Monoid`` 的時候都是依靠這些定律才可以稱作實質上的 monoid。所以我們必須確保他們遵守：
+在我們繼續接下去看幾個 ``Monoid`` 的例子前，我們來看一下 monoid law。我們提過必須有一個值作為 identity 以及一個遵守結合律的二元函數當作前提。雖然可以定義一個不遵守這些定律的 ``Monoid`` instance，但這樣寫出來的 instance 就沒有用了，因為我們在使用 ``Monoid`` 的時候都是依靠這些定律才可以稱作實質上的 monoid。所以我們必須確保他們遵守：
 
     # ``mempty `mappend` x = x``
     # ``x `mappend` mempty = x``
@@ -1134,9 +1134,9 @@ class Monoid m where
 
 
 {{
-instance Monoid [a] where  
-    mempty = []  
-    mappend = (++)  
+instance Monoid [a] where
+    mempty = []
+    mappend = (++)
 }}
 
 list 是 ``Monoid`` typeclass 的一個 instance，這跟他們裝的元素的型別無關。注意到我們寫 ``instance Monoid [a]`` 而非 ``instance Monoid []``，這是因為 ``Monoid`` 要求 instance 必須是具體型別。
@@ -1144,20 +1144,20 @@ list 是 ``Monoid`` typeclass 的一個 instance，這跟他們裝的元素的�
 我們試著跑跑看，得到我們預期中的結果：
 
 {{
-ghci> [1,2,3] `mappend` [4,5,6]  
-[1,2,3,4,5,6]  
-ghci> ("one" `mappend` "two") `mappend` "tree"  
-"onetwotree"  
-ghci> "one" `mappend` ("two" `mappend` "tree")  
-"onetwotree"  
-ghci> "one" `mappend` "two" `mappend` "tree"  
-"onetwotree"  
-ghci> "pang" `mappend` mempty  
-"pang"  
-ghci> mconcat [[1,2],[3,6],[9]]  
-[1,2,3,6,9]  
-ghci> mempty :: [a]  
-[]  
+ghci> [1,2,3] `mappend` [4,5,6]
+[1,2,3,4,5,6]
+ghci> ("one" `mappend` "two") `mappend` "tree"
+"onetwotree"
+ghci> "one" `mappend` ("two" `mappend` "tree")
+"onetwotree"
+ghci> "one" `mappend` "two" `mappend` "tree"
+"onetwotree"
+ghci> "pang" `mappend` mempty
+"pang"
+ghci> mconcat [[1,2],[3,6],[9]]
+[1,2,3,6,9]
+ghci> mempty :: [a]
+[]
 }}
 
 [^../img/smug.png]
@@ -1177,11 +1177,11 @@ ghci> "two" `mappend` "one"
 "twoone"  
 }}
 
-這樣並沒有關系。``3 * 5`` 跟 ``5 * 3`` 會相等只不過是乘法的性質而已，但沒有保證所有 monoid 都要遵守。
+這樣並沒有關係。``3 * 5`` 跟 ``5 * 3`` 會相等只不過是乘法的性質而已，但沒有保證所有 monoid 都要遵守。
 
 ===Product and Sum
 
-我們已經描述過將數值表現成一種 monoid 的方式。只要將 ``*`` 當作二元函數而 ``1`` 當作 identity 就好了。而且這不是唯一一種方式，另一種方式是將 ``+`` 作為二元函數而 ``0`` 作為 identity。
+我們已經描述過將數值表現成一種 monoid 的方式。只要將 ``*`` 當作二元函數而 ``1`` 當作 identity 就好了。而且這不是唯一的方式，另一種方式是將 ``+`` 作為二元函數而 ``0`` 作為 identity。
 
 {{
 ghci> 0 + 4  
@@ -1215,14 +1215,14 @@ instance Num a => Monoid (Product a) where
 ``mempty`` 只不過是將 ``1`` 包在 ``Product`` 中。``mappend`` 則對 ``Product`` 的構造子做模式匹配，將兩個取出的數值相乘後再將結果放回去。就如你看到的，typeclass 定義前面有 ``Num a`` 的條件限制。所以他代表 ``Product a`` 對於所有屬於 ``Num`` 的 ``a`` 是一個 ``Monoid``。要將 ``Product a`` 作為一個 monoid 使用，我們需要用 newtype 來做包裹跟解開的動作。
 
 {{
-ghci> getProduct $ Product 3 `mappend` Product 9  
-27  
-ghci> getProduct $ Product 3 `mappend` mempty  
-3  
-ghci> getProduct $ Product 3 `mappend` Product 4 `mappend` Product 2  
-24  
-ghci> getProduct . mconcat . map Product $ [3,4,2]  
-24  
+ghci> getProduct $ Product 3 `mappend` Product 9
+27
+ghci> getProduct $ Product 3 `mappend` mempty
+3
+ghci> getProduct $ Product 3 `mappend` Product 4 `mappend` Product 2
+24
+ghci> getProduct . mconcat . map Product $ [3,4,2]
+24
 }}
 
 這當作 ``Monoid`` 的一個演練還不錯，但並不會有人覺得這會比 ``3 * 9`` 跟 ``3 * 1`` 這種方式來做乘法要好。但我們稍後會說明儘管像這種顯而易見的定義還是有他方便的地方。
@@ -1230,12 +1230,12 @@ ghci> getProduct . mconcat . map Product $ [3,4,2]
 ``Sum`` 跟 ``Product`` 定義的方式類似，我們也可以用類似的方式操作：
 
 {{
-ghci> getSum $ Sum 2 `mappend` Sum 9  
-11  
-ghci> getSum $ mempty `mappend` Sum 3  
-3  
-ghci> getSum . mconcat . map Sum $ [1,2,3]  
-6  
+ghci> getSum $ Sum 2 `mappend` Sum 9
+11
+ghci> getSum $ mempty `mappend` Sum 3
+3
+ghci> getSum . mconcat . map Sum $ [1,2,3]
+6
 }}
 
 
@@ -1244,58 +1244,58 @@ ghci> getSum . mconcat . map Sum $ [1,2,3]
 另一種可以有兩種表示成 monoid 方式的型別是 ``Bool``。第一種方式是將 ``||`` 當作二元函數，而 ``False`` 作為 identity。這樣的意思是只要有任何一個參數是 ``True`` 他就回傳 ``True``，否則回傳 ``Falsse``。所以如果我們使用 ``False`` 作為 identity，他會在跟 ``False`` 做 OR 時回傳 ``False``，跟 ``True`` 做 OR 時回傳 ``True``。``Any`` 這個 newtype 是 ``Monoid`` 的一個 instance，並定義如下：
 
 {{
-newtype Any = Any { getAny :: Bool }  
-    deriving (Eq, Ord, Read, Show, Bounded)  
+newtype Any = Any { getAny :: Bool }
+    deriving (Eq, Ord, Read, Show, Bounded)
 }}
 
 他的 instance 長得像這樣：
 
 {{
-instance Monoid Any where  
-    mempty = Any False  
-    Any x `mappend` Any y = Any (x || y)  
+instance Monoid Any where
+    mempty = Any False
+    Any x `mappend` Any y = Any (x || y)
 }}
 
 他叫做 ``Any`` 的理由是 ``x `mappend` y`` 當有任何一個是 ``True`` 時就會是 ``True``。就算是更多個用 ``mappend`` 串起來的 ``Any``，他也會在任何一個是 ``True`` 回傳 ``True``。
 
 
 {{
-ghci> getAny $ Any True `mappend` Any False  
-True  
-ghci> getAny $ mempty `mappend` Any True  
-True  
-ghci> getAny . mconcat . map Any $ [False, False, False, True]  
-True  
-ghci> getAny $ mempty `mappend` mempty  
-False  
+ghci> getAny $ Any True `mappend` Any False
+True
+ghci> getAny $ mempty `mappend` Any True
+True
+ghci> getAny . mconcat . map Any $ [False, False, False, True]
+True
+ghci> getAny $ mempty `mappend` mempty
+False
 }}
 
 另一種 ``Bool`` 表現成 ``Monoid`` 的方式是用 ``&&`` 作為二元函數，而 ``True`` 作為 identity。只有當所有都是 ``True`` 的時候才會回傳 ``True``。下面是他的 newtype 定義：
 
 {{
-newtype All = All { getAll :: Bool }  
-        deriving (Eq, Ord, Read, Show, Bounded)  
+newtype All = All { getAll :: Bool }
+        deriving (Eq, Ord, Read, Show, Bounded)
 }}
 
 而這是他的 instance：
 
 {{
-instance Monoid All where  
-        mempty = All True  
-        All x `mappend` All y = All (x && y)  
+instance Monoid All where
+        mempty = All True
+        All x `mappend` All y = All (x && y)
 }}
 
 當我們用 ``mappend`` 來串起 ``All`` 型別的值時，結果只有當所有 ``mappend`` 的值是 ``True`` 時才會是 ``True``：
 
 {{
-ghci> getAll $ mempty `mappend` All True  
-True  
-ghci> getAll $ mempty `mappend` All False  
-False  
-ghci> getAll . mconcat . map All $ [True, True, True]  
-True  
-ghci> getAll . mconcat . map All $ [True, True, False]  
-False  
+ghci> getAll $ mempty `mappend` All True
+True
+ghci> getAll $ mempty `mappend` All False
+False
+ghci> getAll . mconcat . map All $ [True, True, True]
+True
+ghci> getAll . mconcat . map All $ [True, True, False]
+False
 }}
 
 
@@ -1305,25 +1305,25 @@ False
 === The Ordering monoid
 
 
-還記得 ``Ordering`` 型別嗎?他是比較運算之後得到的結果，包含三個值：``LT``，``EQ`` 跟 ``GT``，分別代表小於，等於跟大於：
+還記得 ``Ordering`` 型別嗎？他是比較運算之後得到的結果，包含三個值：``LT``，``EQ`` 跟 ``GT``，分別代表小於，等於跟大於：
 
 {{
-ghci> 1 `compare` 2  
-LT  
-ghci> 2 `compare` 2  
-EQ  
-ghci> 3 `compare` 2  
-GT  
+ghci> 1 `compare` 2
+LT
+ghci> 2 `compare` 2
+EQ
+ghci> 3 `compare` 2
+GT
 }}
 
 針對 list，數值跟布林值而言，要找出 monoid 的行為只要去檢視已經定義的函數，然後看看有沒有展現出 monoid 的特性就可以了，但對於 ``Ordering``，我們就必須要更仔細一點才能看出來是否是一個 monoid，但其實他的 ``Monoid`` instance 還蠻直覺的：
 
 {{
-instance Monoid Ordering where  
-    mempty = EQ  
-    LT `mappend` _ = LT  
-    EQ `mappend` y = y  
-    GT `mappend` _ = GT  
+instance Monoid Ordering where
+    mempty = EQ
+    LT `mappend` _ = LT
+    EQ `mappend` y = y
+    GT `mappend` _ = GT
 }}
 
 [$../img/bear.png]
@@ -1337,24 +1337,26 @@ instance Monoid Ordering where
 很重要的一件事是在 ``Ordering`` 的 ``Monoid`` 定義裡 ``x `mappend` y`` 並不等於 ``y `mappend` x``。因為除非第一個參數是 ``EQ``，不然結果就會是第一個參數。所以 ``LT `mappend` GT`` 等於 ``LT``，然而 ``GT `mappend` LT`` 等於 ``GT``。
 
 {{
-ghci> LT `mappend` GT  
-LT  
-ghci> GT `mappend` LT  
-GT  
-ghci> mempty `mappend` LT  
-LT  
-ghci> mempty `mappend` GT  
-GT  
+ghci> LT `mappend` GT
+LT
+ghci> GT `mappend` LT
+GT
+ghci> mempty `mappend` LT
+LT
+ghci> mempty `mappend` GT
+GT
 }}
 
 所以這個 monoid 在什麽情況下會有用呢？假設你要寫一個比較兩個字串長度的函數，並回傳 ``Ordering``。而且當字串一樣長的時候，我們不直接回傳 ``EQ``，反而繼續用字典順序比較他們。一種實作的方式如下：
 
 
 {{
-lengthCompare :: String -> String -> Ordering  
-lengthCompare x y = let a = length x `compare` length y   
-                        b = x `compare` y  
-                    in  if a == EQ then b else a  
+lengthCompare :: String -> String -> Ordering
+lengthCompare x y =
+    let
+        a = length x `compare` length y
+        b = x `compare` y
+    in  if a == EQ then b else a
 }}
 
 我們稱呼比較長度的結果為 ``a``，而比較字典順序的結果為 ``b``，而當長度一樣時，我們就回傳字典順序。
@@ -1364,41 +1366,42 @@ lengthCompare x y = let a = length x `compare` length y
 {{
 import Data.Monoid
 
-lengthCompare :: String -> String -> Ordering  
-lengthCompare x y = (length x `compare` length y) `mappend`  
-                    (x `compare` y)  
+lengthCompare :: String -> String -> Ordering
+lengthCompare x y = (length x `compare` length y) `mappend`
+                    (x `compare` y)
 }}
 
 我們可以試著跑跑看：
 
 {{
-ghci> lengthCompare "zen" "ants"  
-LT  
-ghci> lengthCompare "zen" "ant"  
-GT  
+ghci> lengthCompare "zen" "ants"
+LT
+ghci> lengthCompare "zen" "ant"
+GT
 }}
 
 要記住當我們使用 ``mappend``。他在左邊不等於 ``EQ`` 的情況下都會回傳左邊的值。相反地則回傳右邊的值。這也是為什麽我們將我們認為比較重要的順序放在左邊的參數。如果我們要繼續延展這個函數，要讓他們比較母音的順序，並把這順序列為第二重要，那我們可以這樣修改他：
 
 {{
-import Data.Monoid  
-  
-lengthCompare :: String -> String -> Ordering  
-lengthCompare x y = (length x `compare` length y) `mappend`  
-                    (vowels x `compare` vowels y) `mappend`  
-                    (x `compare` y)  
-    where vowels = length . filter (`elem` "aeiou")  
+import Data.Monoid
+
+lengthCompare :: String -> String -> Ordering
+lengthCompare x y =
+    (length x `compare` length y) `mappend`
+    (vowels x `compare` vowels y) `mappend`
+    (x `compare` y)
+    where vowels = length . filter (`elem` "aeiou")
 }}
 
 我們寫了一個輔助函數，他接受一個字串並回傳他有多少母音。他是先用 filter 來把字母濾到剩下 ``"aeiou"``，然後再用 ``length`` 計算長度。
 
 {{
-ghci> lengthCompare "zen" "anna"  
-LT  
-ghci> lengthCompare "zen" "ana"  
-LT  
-ghci> lengthCompare "zen" "ann"  
-GT  
+ghci> lengthCompare "zen" "anna"
+LT
+ghci> lengthCompare "zen" "ana"
+LT
+ghci> lengthCompare "zen" "ann"
+GT
 }}
 
 在第一個例子中我們看到長度不同所以回傳 ``LT``，明顯地 ``"zen"`` 要短於 ``"anna"``。在第二個例子中，長度是一樣的，但第二個字串有比較多的母音，所以結果仍然是 ``LT``。在第三個範例中，兩個長度都相等，他們也有相同個數的母音，經由字典順序比較後得到 ``"zen"`` 比較大。
@@ -1410,26 +1413,26 @@ GT
 ===Maybe the monoid
 
 
-我們來看一下 ``Maybe a`` 是怎樣有多種方式來表現成 ``Monoid`` 的，並且說明哪些是比較有用的。一種將 ``Maybe a`` 當作 monoid 的方式就是他的 ``a`` 也是一個 monoid，而我們將 ``mappend`` 實作成使用包在 ``Just`` 裡面的值對應的 ``mappend``。並且用 ``Nothing`` 當作 identity。所以如果我 ``mappend`` 兩個參數中有一個是 ``Nothing``。那結果就會是另一邊的值。他的 instance 定義如下：	
+我們來看一下 ``Maybe a`` 是怎樣有多種方式來表現成 ``Monoid`` 的，並且說明哪些是比較有用的。一種將 ``Maybe a`` 當作 monoid 的方式就是他的 ``a`` 也是一個 monoid，而我們將 ``mappend`` 實作成使用包在 ``Just`` 裡面的值對應的 ``mappend``。並且用 ``Nothing`` 當作 identity。所以如果我 ``mappend`` 兩個參數中有一個是 ``Nothing``。那結果就會是另一邊的值。他的 instance 定義如下：
 
 
 {{
-instance Monoid a => Monoid (Maybe a) where  
-    mempty = Nothing  
-    Nothing `mappend` m = m  
-    m `mappend` Nothing = m  
-    Just m1 `mappend` Just m2 = Just (m1 `mappend` m2)  
+instance Monoid a => Monoid (Maybe a) where
+    mempty = Nothing
+    Nothing `mappend` m = m
+    m `mappend` Nothing = m
+    Just m1 `mappend` Just m2 = Just (m1 `mappend` m2)
 }}
 
 留意到 class constraint。他說明 ``Maybe a`` 只有在 ``a`` 是 ``Monoid`` 的情況下才會是一個 ``Monoid``。如果我們 ``mappend`` 某個東西跟 ``Nothing``。那結果就會是某個東西。如果我們 ``mappend`` 兩個 ``Just``，那 ``Just`` 包住的結果就會 ``mappended`` 在一起並放回 ``Just``。我們能這麼做是因為 class constraint 保證了在 ``Just`` 中的值是 ``Monoid``。
 
 {{
-ghci> Nothing `mappend` Just "andy"  
-Just "andy"  
-ghci> Just LT `mappend` Nothing  
-Just LT  
-ghci> Just (Sum 3) `mappend` Just (Sum 4)  
-Just (Sum {getSum = 7})  
+ghci> Nothing `mappend` Just "andy"
+Just "andy"
+ghci> Just LT `mappend` Nothing
+Just LT
+ghci> Just (Sum 3) `mappend` Just (Sum 4)
+Just (Sum {getSum = 7})
 }}
 
 這當你在處理有可能失敗的 monoid 的時候比較有用。有了這個 instance，我們就不必一一去檢查他們是否失敗，是否是 ``Nothing`` 或是 ``Just``，我們可以直接將他們當作普通的 monoid。
@@ -1438,44 +1441,44 @@ Just (Sum {getSum = 7})
 但如果在 ``Maybe`` 中的型別不是 ``Monoid`` 呢？注意到在先前的 instance 定義中，唯一有依賴於 monoid 限制的情況就是在 ``mappend`` 兩個 ``Just`` 的時候。但如果我們不知道包在 ``Just`` 裡面的值究竟是不是 monoid，我們根本無法用 ``mappend`` 操作他們，所以該怎麼辦呢？一種方式就是直接丟掉第二個值而留下第一個值。這就是 ``First a`` 存在的目的，而這是他的定義：
 
 {{
-newtype First a = First { getFirst :: Maybe a }  
-    deriving (Eq, Ord, Read, Show) 
+newtype First a = First { getFirst :: Maybe a }
+    deriving (Eq, Ord, Read, Show)
 }}
 
 我們接受一個 ``Maybe a`` 並把他包成 newtype，``Monoid`` 的定義如下：
 
 {{
-instance Monoid (First a) where  
-    mempty = First Nothing  
-    First (Just x) `mappend` _ = First (Just x)  
-    First Nothing `mappend` x = x  
+instance Monoid (First a) where
+    mempty = First Nothing
+    First (Just x) `mappend` _ = First (Just x)
+    First Nothing `mappend` x = x
 }}
 
-正如我們說過得，``mempty`` 就是包在 ``First`` 中的 ``Nothing``。如果 ``mappend`` 的第一個參數是 ``Just``，我們就直接忽略第二個參數。如果第一個參數是 ``Nothing``，那我們就將第二個參數當作結果。並不管他究竟是 ``Just`` 或是 ``Nothing``：	
+正如我們說過得，``mempty`` 就是包在 ``First`` 中的 ``Nothing``。如果 ``mappend`` 的第一個參數是 ``Just``，我們就直接忽略第二個參數。如果第一個參數是 ``Nothing``，那我們就將第二個參數當作結果。並不管他究竟是 ``Just`` 或是 ``Nothing``：
 
 {{
-ghci> getFirst $ First (Just 'a') `mappend` First (Just 'b')  
-Just 'a'  
-ghci> getFirst $ First Nothing `mappend` First (Just 'b')  
-Just 'b'  
-ghci> getFirst $ First (Just 'a') `mappend` First Nothing  
-Just 'a'  
+ghci> getFirst $ First (Just 'a') `mappend` First (Just 'b')
+Just 'a'
+ghci> getFirst $ First Nothing `mappend` First (Just 'b')
+Just 'b'
+ghci> getFirst $ First (Just 'a') `mappend` First Nothing
+Just 'a'
 }}
 
 ``First`` 在我們有一大串 ``Maybe`` 而且想知道他們之中就竟有沒有 ``Just`` 的時候很有用。可以利用 ``mconcat``：
 
 {{
-ghci> getFirst . mconcat . map First $ [Nothing, Just 9, Just 10]  
-Just 9  
+ghci> getFirst . mconcat . map First $ [Nothing, Just 9, Just 10]
+Just 9
 }}
 
 如果我們希望定義一個 ``Maybe a`` 的 monoid，讓他當 ``mappend`` 的兩個參數都是 ``Just`` 的時候將第二個參數當作結果。``Data.Monoid`` 中有一個現成的 ``Last a``，他很像是 ``First a``，只差在 ``mappend`` 跟 ``mconcat`` 會保留最後一個非 ``Nothing`` 的值。
 
 {{
-ghci> getLast . mconcat . map Last $ [Nothing, Just 9, Just 10]  
-Just 10  
-ghci> getLast $ Last (Just "one") `mappend` Last (Just "two")  
-Just "two" 
+ghci> getLast . mconcat . map Last $ [Nothing, Just 9, Just 10]
+Just 10
+ghci> getLast $ Last (Just "one") `mappend` Last (Just "two")
+Just "two"
 }}
 
 
@@ -1488,35 +1491,35 @@ Just "two"
 由於有太多種資料結構可以 fold 了，所以我們定義了 ``Foldable`` 這個 typeclass。就像 ``Functor`` 是定義可以 map over 的結構。``Foldable`` 是定義可以 fold 的結構。在 ``Data.Foldable`` 中有定義了一些有用的函數，但他們名稱跟 ``Prelude`` 中的名稱衝突。所以最好是用 qualified 的方式 import 他們：
 
 {{
-import qualified Foldable as F      
+import qualified Foldable as F
 }}
 
 為了少打一些字，我們將他們 import qualified 成 ``F``。所以這個 typeclass 中定義了哪些函數呢？有 ``foldr``，``foldl``，``foldr1`` 跟 ``foldl1``。你會說我們已經知道這些函數了，他們有什麽不一樣的地方嗎？我們來比較一下 ``Foldable`` 中的 ``foldr`` 跟 ``Prelude`` 中的 ``foldr`` 的型別異同：
 
 {{
-ghci> :t foldr  
-foldr :: (a -> b -> b) -> b -> [a] -> b  
-ghci> :t F.foldr  
-F.foldr :: (F.Foldable t) => (a -> b -> b) -> b -> t a -> b  
+ghci> :t foldr
+foldr :: (a -> b -> b) -> b -> [a] -> b
+ghci> :t F.foldr
+F.foldr :: (F.Foldable t) => (a -> b -> b) -> b -> t a -> b
 }}
 
 儘管 ``foldr`` 接受一個 list 並將他 fold 起來，``Data.Foldable`` 中的 ``foldr`` 接受任何可以 fold 的型別。並不只是 list。
 而兩個 ``foldr`` 對於 list 的結果是相同的：
 
 {{
-ghci> foldr (*) 1 [1,2,3]  
-6  
-ghci> F.foldr (*) 1 [1,2,3]  
-6  
+ghci> foldr (*) 1 [1,2,3]
+6
+ghci> F.foldr (*) 1 [1,2,3]
+6
 }}
 
 那有哪些資料結構支援 fold 呢？首先我們有 ``Maybe``：
 
 {{
-ghci> F.foldl (+) 2 (Just 9)  
-11  
-ghci> F.foldr (||) False (Just True)  
-True 
+ghci> F.foldl (+) 2 (Just 9)
+11
+ghci> F.foldr (||) False (Just True)
+True
 }}
 
 
@@ -1526,13 +1529,14 @@ True
 還記得 Making Our Own Types and Typeclass 章節中的樹狀的資料結構嗎？我們是這樣定義的：
 
 {{
-data Tree a = Empty | Node a (Tree a) (Tree a) deriving (Show, Read, Eq)      
+data Tree a = Empty | Node a (Tree a) (Tree a)
+    deriving (Show, Read, Eq)
 }}
 
 我們說一棵樹要不就是一棵空的樹要不然就是一個包含值的節點，並且還指向另外兩棵樹。定義他之後，我們將他定義成 ``Functor`` 的 instance，因此可以 ``fmap`` 他。現在我們要將他定義成 ``Foldable`` 的 instance，這樣我們就可以 fold 他。要定義成 ``Foldable`` 的一種方式就是實作 ``foldr``。但另一種比較簡單的方式就是實作 ``foldMap``，他也屬於 ``Foldable`` typeclass。``foldMap`` 的型別如下：
 
 {{
-foldMap :: (Monoid m, Foldable t) => (a -> m) -> t a -> m  
+foldMap :: (Monoid m, Foldable t) => (a -> m) -> t a -> m
 }}
 
 第一個參數是一個函數，這個函數接受 foldable 資料結構中包含的元素的型別，並回傳一個 monoid。他第二個參數是一個 foldable 的結構，並包含型別 ``a`` 的元素。他將第一個函數來 map over 這個 foldable 的結構，因此得到一個包含 monoid 的 foldable 結構。然後用 ``mappend`` 來簡化這些 monoid，最後得到單一的一個 monoid。這個函數聽起來不太容易理解，但我們下面會看到他其實很容易實作。而且好消息是只要實作了這個函數就可以讓我們的函數成為 ``Foldable``。所以我們只要實作某個型別的 ``foldMap``，我們就可以得到那個型別的 ``foldr`` 跟 ``foldl``。
@@ -1541,11 +1545,11 @@ foldMap :: (Monoid m, Foldable t) => (a -> m) -> t a -> m
 這就是我們如何定義 ``Tree`` 成為 ``Foldable`` 的：
 
 {{
-instance F.Foldable Tree where  
-    foldMap f Empty = mempty  
-    foldMap f (Node x l r) = F.foldMap f l `mappend`  
-                                f x           `mappend`  
-                                F.foldMap f r  
+instance F.Foldable Tree where
+    foldMap f Empty = mempty
+    foldMap f (Node x l r) = F.foldMap f l `mappend`
+                                f x           `mappend`
+                                F.foldMap f r
 }}
 
 
@@ -1565,38 +1569,38 @@ instance F.Foldable Tree where
 
 
 {{
-testTree = Node 5  
-            (Node 3  
-             (Node 1 Empty Empty)  
-             (Node 6 Empty Empty)  
-            )  
-            (Node 9  
-             (Node 8 Empty Empty)  
-             (Node 10 Empty Empty)  
-            )  
+testTree = Node 5
+            (Node 3
+             (Node 1 Empty Empty)
+             (Node 6 Empty Empty)
+            )
+            (Node 9
+             (Node 8 Empty Empty)
+             (Node 10 Empty Empty)
+            )
 }}
 
 他的 root 是 ``5``，而他左邊下來分別是 ``3``，再來是 ``1`` 跟 ``6``。而右邊下來是 ``9``，再來是 ``8`` 跟 ``10``。有了 ``Foldable`` 的定義，我們就能像對 list 做 fold 一樣對樹做 fold：
 
 {{
-ghci> F.foldl (+) 0 testTree  
-42  
-ghci> F.foldl (*) 1 testTree  
-64800  
+ghci> F.foldl (+) 0 testTree
+42
+ghci> F.foldl (*) 1 testTree
+64800
 }}
 
 ``foldMap`` 不只是定義 ``Foldable`` 新的 instance 有用。他也對簡化我們的結構至單一 monoid 值有用。舉例來說，如果我們想要知道我們的樹中有沒有 ``3``，我們可以這樣做：
 
 {{
-ghci> getAny $ F.foldMap (\x -> Any $ x == 3) testTree  
-True 
+ghci> getAny $ F.foldMap (\x -> Any $ x == 3) testTree
+True
 }}
 
 這邊 ``\x -> Any $ x == 3`` 是一個接受一個數值並回傳一個 monoid 的函數，也就是一個包在 ``Any`` 中的 ``Bool``。``foldMap`` 將這個函數套用至樹的每一個節點，並把結果用 ``mappend`` 簡化成單一 monoid。如果我們這樣做：
 
 {{
-ghci> getAny $ F.foldMap (\x -> Any $ x > 15) testTree  
-False 
+ghci> getAny $ F.foldMap (\x -> Any $ x > 15) testTree
+False
 }}
 
 經過套用 lambda 之後我們所有的節點都會是 ``Any False``。但 ``mappend`` 必須要至少吃到一個 ``True`` 才能讓最後的結果變成 ``True``。這也是為什麽結果會是 ``False``，因為我們樹中所有的值都大於 ``15``。
@@ -1605,8 +1609,8 @@ False
 我們也能將 ``foldMap`` 配合 ``\x -> [x]`` 使用來將我們的樹轉成 list。經過套用那個函數後，所有節點都變成包含單一元素的 list。最後用 ``mappend`` 將這些單一元素的 list 轉成一個裝有全部元素的 list：
 
 {{
-ghci> F.foldMap (\x -> [x]) testTree  
-[1,3,6,5,8,9,10] 
+ghci> F.foldMap (\x -> [x]) testTree
+[1,3,6,5,8,9,10]
 }}
 
 這個小技巧並不限於樹而已，他可以被套用在任何 ``Foldable`` 上。
