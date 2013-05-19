@@ -15,7 +15,7 @@ Typeclass 的運用是很隨意的。我們可以定義自己的資料型態，�
 
     *給一點建議*。這盒子的比喻嘗試讓你抓到些 functors 是如何運作的感覺。在之後我們也會用相同的比喻來比喻 applicative functors 跟 monads。在多數情況下這種比喻是恰當的，但不要過度引申，有些 functors 是不適用這個比喻的。一個比較正確的形容是 functors 是一個計算語境（computational context）。這個語境可能是這個 computation 可能帶有值，或是有可能會失敗（像 ``Maybe`` 跟 ``Either a``），或是他可能有多個值（像 lists），等等。
 
-如果一個 type constructor 要是 ``Functor`` 的 instance，那他的 kind 必須是 ``* -> *``，這代表他必須剛好接受一個 type 當作 type parameter。像是 ``Maybe`` 可以是 Functor 的一個 instance，因為他接受一個 type parameter，來做成像是 ``Maybe Int``，或是 ``Maybe String``。如果一個 type constructor 接受兩個參數，像是 ``Either``，我們必須給他兩個 type parameter。所以我們不能這樣寫：``instance Functor Either where``，但我們可以寫 ``instance Functor (Either a) where``，如果我們把 ``fmap`` 限縮成只是 ``Either a`` 的，那他的型態就是 ``fmap :: (b -> c) -> Either a b -> Either a c``。就像你看到的，``Either a`` 的是固定的一部分，因為 ``Either a`` 只恰好接受一個 type parameter，但 ``Either`` 則要接球兩個 type parameters。這樣 fmap 的型態變成 ``fmap :: (b -> c) -> Either b -> Either c``，這不太合理。
+如果一個 type constructor 要是 ``Functor`` 的 instance，那他的 kind 必須是 ``* -> *``，這代表他必須剛好接受一個 type 當作 type parameter。像是 ``Maybe`` 可以是 Functor 的一個 instance，因為他接受一個 type parameter，來做成像是 ``Maybe Int``，或是 ``Maybe String``。如果一個 type constructor 接受兩個參數，像是 ``Either``，我們必須給他兩個 type parameter。所以我們不能這樣寫：``instance Functor Either where``，但我們可以寫 ``instance Functor (Either a) where``，如果我們把 ``fmap`` 限縮成只是 ``Either a`` 的，那他的型態就是 ``fmap :: (b -> c) -> Either a b -> Either a c``。就像你看到的，``Either a`` 的是固定的一部分，因為 ``Either a`` 只恰好接受一個 type parameter，但 ``Either`` 則要接受兩個 type parameters。這樣 fmap 的型態變成 ``fmap :: (b -> c) -> Either b -> Either c``，這不太合理。
 
 我們知道有許多型態都是 ``Functor`` 的 instance，像是 ``[]``，``Maybe``，``Either a`` 以及我們自己寫的 ``Tree``。我們也看到了如何用一個函數 map 他們。在這一章節，我們再多舉兩個例子，也就是 ``IO`` 跟 ``(->) r``。
 
@@ -946,37 +946,37 @@ ghci> getPair $ fmap reverse (Pair ("london calling", 3))
 我們提到 ``newtype`` 一般來講比 ``data`` 來得有效率。``newtype`` 能做的唯一一件事就是將現有的型別包成新的型別。這樣 Haskell 在內部就能將新的型別的值用舊的方式來操作。只是要記住他們還是不同的型別。這代表 ``newtype`` 並不只是有效率，他也具備 lazy 的特性。我們來說明一下這是什麽意思。
 
 
-就像我們之前說得，Haskell 預設是具備 lazy 的特性，這代表只有當我們要將函數的結果印出來的時候計算才會發生。或者說，只有當我們真的需要結果的時候計算才會發生。在 Haskell 中 ``undefined`` 代表會造成錯誤的計算。如果我們試著計算他，也就是將他印到終端中，Haskell 會丟出錯誤。
+就像我們之前說的，Haskell 預設是具備 lazy 的特性，這代表只有當我們要將函數的結果印出來的時候計算才會發生。或者說，只有當我們真的需要結果的時候計算才會發生。在 Haskell 中 ``undefined`` 代表會造成錯誤的計算。如果我們試著計算他，也就是將他印到終端中，Haskell 會丟出錯誤。
 
 {{
-ghci> undefined  
-*** Exception: Prelude.undefined  
+ghci> undefined
+*** Exception: Prelude.undefined
 }}
 
 然而，如果我們做一個 list，其中包含一些 ``undefined`` 的值，但卻邀邱一個不是 ``undefined`` 的 head，那一切都會順利地被計算，因為 Haskell 並不需要 list 中其他元素來得到結果。我們僅僅需要看道地一個元素而已。
 
 {{
-ghci> head [3,4,5,undefined,2,undefined]  
-3  
+ghci> head [3,4,5,undefined,2,undefined]
+3
 }}
 
 現在們考慮下面的型別：
 
 {{
-data CoolBool = CoolBool { getCoolBool :: Bool }      
+data CoolBool = CoolBool { getCoolBool :: Bool }
 }}
 
 這是一個用 ``data`` 關鍵字定義的 algebraic data type。他有一個值建構子並只有一個型別為 ``Bool`` 的欄位。我們寫一個函數來對 ``CoolBool`` 做模式匹配，並回傳一個 ``"hello"`` 的值。他並不會館 ``CoolBool`` 中裝的究竟是 ``True`` 或 ``False``。
 
 {{
-helloMe :: CoolBool -> String  
-helloMe (CoolBool _) = "hello"  
+helloMe :: CoolBool -> String
+helloMe (CoolBool _) = "hello"
 }}
 
 這次我們不餵給這個函數一個普通的 ``CoolBool``，而是丟給他一個 ``undefined``。
 
-{{ 
-ghci> helloMe undefined  
+{{
+ghci> helloMe undefined
 "*** Exception: Prelude.undefined  "
 }}
 
@@ -986,14 +986,14 @@ ghci> helloMe undefined
 我們不用 ``data`` 來定義 ``CoolBool`` 而用 ``newtype``：
 
 {{
-newtype CoolBool = CoolBool { getCoolBool :: Bool }      
+newtype CoolBool = CoolBool { getCoolBool :: Bool }
 }}
 
 我們不用修改 ``helloMe`` 函數，因為對於模式匹配使用 ``newtype`` 或 ``data`` 都是一樣。我們再來將 ``undefined`` 餵給 ``helloMe``。
 
 {{
-ghci> helloMe undefined  
-"hello" 
+ghci> helloMe undefined
+"hello"
 }}
 
 居然正常運作！為什麽呢？正如我們說過得，當我們使用 ``newtype`` 的時候，Haskell 內部可以將新的型別用舊的型別來表示。他不必加入另一層 box 來包住舊有的型別。他只要注意他是不同的型別就好了。而且 Haskell 會知道 ``newtype`` 定義的型別一定只會有一個構造子，他不必計算餵給函數的值就能確定他是 ``(CoolBool _)`` 的形式，因為 ``newtype`` 只有一個可能的值跟單一欄位！
@@ -1010,23 +1010,23 @@ ghci> helloMe undefined
 ``type`` 關鍵字是讓我們定義 type synonyms。他代表我們只是要給一個現有的型別另一個名字，假設我們這樣做：
 
 {{
-type IntList = [Int]      
+type IntList = [Int]
 }}
 
 這樣做可以允許我們用 ``IntList`` 的名稱來指稱 ``[Int]``。我們可以交換地使用他們。但我們並不會因此有一個 ``IntList`` 的值構造子。因為 ``[Int]`` 跟 ``IntList`` 只是兩種指稱同一個型別的方式。我們在指稱的時候用哪一個並無所謂。
 
 {{
-ghci> ([1,2,3] :: IntList) ++ ([1,2,3] :: [Int])  
-[1,2,3,1,2,3]  
+ghci> ([1,2,3] :: IntList) ++ ([1,2,3] :: [Int])
+[1,2,3,1,2,3]
 }}
 
 當我們想要讓 type signature 更清楚一些，給予我們更瞭解函數的 context 的時候，我們會定義 type synonyms。舉例來說，當我們用一個型別為 ``[(String,String)]`` 的 association list 來代表一個電話簿的時候，我們可以定義一個 ``PhoneBook1`` 的 type synonym，這樣 type signature 會比較容易讀。
 
- 
+
 ``newtype`` 關鍵字將現有的型別包成一個新的型別，大部分是為了要讓他們可以是特定 typeclass 的 instance 而這樣做。當我們使用 ``newtype`` 來包裹一個現有的型別時，這個型別跟原有的型別是分開的。如果我們將下面的型別用 ``newtype`` 定義：
 
 {{
-newtype CharList = CharList { getCharList :: [Char] }      
+newtype CharList = CharList { getCharList :: [Char] }
 }}
 
 我們不能用 ``++`` 來將 ``CharList`` 跟 ``[Char]`` 接在一起。我們也不能用 ``++`` 來將兩個 ``CharList`` 接在一起，因為 ``++`` 只能套用在 list 上，而 ``CharList`` 並不是 list，儘管你會說他包含一個 list。但我們可以將兩個 ``CharList`` 轉成 list，將他們 ``++`` 然後再轉回 ``CharList``。
@@ -1207,9 +1207,9 @@ newtype Product a =  Product { getProduct :: a }
 簡單易懂，就是一個單一型別參數的 ``newtype``，並 derive 一些性質。他的 ```Monoid`` 的 instance 長得像這樣：
 
 {{
-instance Num a => Monoid (Product a) where  
-    mempty = Product 1  
-    Product x `mappend` Product y = Product (x * y)  
+instance Num a => Monoid (Product a) where
+    mempty = Product 1
+    Product x `mappend` Product y = Product (x * y)
 }}
 
 ``mempty`` 只不過是將 ``1`` 包在 ``Product`` 中。``mappend`` 則對 ``Product`` 的構造子做模式匹配，將兩個取出的數值相乘後再將結果放回去。就如你看到的，typeclass 定義前面有 ``Num a`` 的條件限制。所以他代表 ``Product a`` 對於所有屬於 ``Num`` 的 ``a`` 是一個 ``Monoid``。要將 ``Product a`` 作為一個 monoid 使用，我們需要用 newtype 來做包裹跟解開的動作。
