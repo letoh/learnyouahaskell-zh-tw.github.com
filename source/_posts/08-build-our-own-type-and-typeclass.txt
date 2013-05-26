@@ -10,9 +10,9 @@
 data Bool = False | True
 }}
 
-*data* 表示我們要定義一個新的型別。``=`` 的左端標明型別的名稱即 ``Bool``，``=`` 的右端就是*值構造子* (*Value Constructor*)，它們明確了該型別可能的值。``|`` 讀作"或"，所以可以這樣閲讀該聲明：``Bool`` 型別的值可以是 ``True`` 或 ``False``。型別名和值構造子的首字母必大寫。
+*data* 表示我們要定義一個新的型別。``=`` 的左端標明型別的名稱即 ``Bool``，``=`` 的右端就是*值構造子* （*Value Constructor*），它們明確了該型別可能的值。``|`` 讀作「或」，所以可以這樣閲讀該聲明：``Bool`` 型別的值可以是 ``True`` 或 ``False``。型別名和值構造子的首字母必大寫。
 
-相似，我們可以假想 ``Int`` 型別的聲明：
+以類似的方式，我們可以假想 ``Int`` 型別的聲明：
 
 {{
 data Int = -2147483648 | -2147483647 | ... | -1 | 0 | 1 | 2 | ... | 2147483647
@@ -22,7 +22,7 @@ data Int = -2147483648 | -2147483647 | ... | -1 | 0 | 1 | 2 | ... | 2147483647
 
 頭尾兩個值構造子分別表示了 ``Int`` 型別的最小值和最大值，注意到真正的型別宣告不是長這個樣子的，這樣寫只是為了便於理解。我們用省略號表示中間省略的一大段數字。
 
-我們想想 Haskell 中圖形的表示方法。表示圓可以用一個 Tuple，如 ``(43.1,55.0,10.4)``，前兩項表示圓心的位置，末項表示半徑。聽著不錯，不過三維向量或其它什麼東西也可能是這種形式！更好的方法就是自己構造一個表示圖形的型別。假定圖形可以是圓 (Circle) 或長方形 (Rectangle)：
+我們想想 Haskell 中圖形的表示方法。表示圓可以用一個 Tuple，如 ``(43.1,55.0,10.4)``，前兩項表示圓心的位置，末項表示半徑。聽著不錯，不過三維向量或其它什麼東西也可能是這種形式！更好的方法就是自己構造一個表示圖形的型別。假定圖形可以是圓（Circle）或長方形（Rectangle）：
 
 {{
 data Shape = Circle Float Float Float | Rectangle Float Float Float Float
@@ -47,9 +47,7 @@ surface (Circle _ _ r) = pi * r ^ 2
 surface (Rectangle x1 y1 x2 y2) = (abs $ x2 - x1) * (abs $ y2 - y1)
 }}
 
-值得一提的是，它的型別聲明表示了該函數取一個 ``Shape`` 值並返回一個 ``Float`` 值。寫 ``Circle -> Float`` 是不可以的，因為 ``Circle`` 並非型別，真正的型別應該是 ``Shape``。這與不能寫``True->False`` 的道理是一樣的。再就是，我們使用的模式匹配針對的都是值構造子。之前我們匹配過 ``[]``、``False`` 或 ``5``，它們都是不包含參數的值構造子。
-
-我們只關心圓的半徑，因此不需理會表示坐標的前兩項：
+值得一提的是，它的型別聲明表示了該函數取一個 shape 值並返回一個 float 值。這裡不能寫成 ``Circle -> Float`` ，因為 ``Circle`` 並非型別，真正的型別應該是 ``Shape``。就像不能寫 ``True->False`` 的道理是一樣的。另外，在這個例子中還依值構造子進行了模式匹配。之前我們匹配過 ``[]``、``False`` 或 ``5``，它們都是不包含參數的值構造子。我們只關心圓的半徑，因此不需理會表示坐標的前兩項：
 
 {{
 ghci> surface $ Circle 10 20 10
@@ -61,7 +59,9 @@ ghci> surface $ Rectangle 0 0 100 100
 Yay，it works！不過我們若嘗試輸出 ``Circle 10 20`` 到控制台，就會得到一個錯誤。這是因為 Haskell 還不知道該型別的字串表示方法。想想，當我們往控制台輸出值的時候，Haskell 會先呼叫 ``show`` 函數得到這個值的字串表示才會輸出。因此要讓我們的 ``Shape`` 型別成為 Show 型別類的成員。可以這樣修改：
 
 {{
-data Shape = Circle Float Float Float | Rectangle Float Float Float Float deriving (Show)
+data Shape = Circle Float Float Float
+           | Rectangle Float Float Float Float
+           deriving (Show)
 }}
 
 先不去深究 *deriving*（派生），可以先這樣理解：若在 ``data`` 聲明的後面加上 ``deriving (Show)``，那 Haskell 就會自動將該型別至于 ``Show`` 型別類之中。好了，由於值構造子是個函數，因此我們可以拿它交給 ``map``，拿它不全呼叫，以及普通函數能做的一切。
@@ -80,11 +80,13 @@ ghci> map (Circle 10 20) [4,5,6,6]
 [Circle 10.0 20.0 4.0,Circle 10.0 20.0 5.0,Circle 10.0 20.0 6.0,Circle 10.0 20.0 6.0]
 }}
 
-我們的型別還可以更好。增加加一個表示二維空間中點的型別，可以讓我們的 ``Shape`` 更加容易理解：
+我們的型別還可以更好。增加一個表示二維空間中點的型別，可以讓我們的 ``Shape`` 更加容易理解：
 
 {{
 data Point = Point Float Float deriving (Show)
-data Shape = Circle Point Float | Rectangle Point Point deriving (Show)
+data Shape = Circle Point Float
+           | Rectangle Point Point
+           deriving (Show)
 }}
 
 注意下 ``Point`` 的定義，它的型別與值構造子用了相同的名字。沒啥特殊含義，實際上，在一個型別含有唯一值構造子時這種重名是很常見的。好的，如今我們的 ``Circle`` 含有兩個項，一個是 ``Point`` 型別，一個是 ``Float`` 型別，好作區分。``Rectangle`` 也是同樣，我們得修改 ``surface`` 函數以適應型別定義的變動。
@@ -119,7 +121,7 @@ ghci> nudge (Circle (Point 34 34) 10) 5 10
 Circle (Point 39.0 44.0) 10.0
 }}
 
-如果不想直接處理 ``Point``，我們可以搞個輔助函數 (auxilliary function)，初始從原點創建圖形，再移動它們。
+如果不想直接處理 ``Point``，我們可以搞個輔助函數（auxilliary function），先在原點創建圖形，再移動它們。
 
 {{
 baseCircle :: Float -> Shape
@@ -134,7 +136,7 @@ ghci> nudge (baseRect 40 100) 60 23
 Rectangle (Point 60.0 23.0) (Point 100.0 123.0)
 }}
 
-毫無疑問，你可以把你的數據型別導出到模組中。只要把你的型別與要導出的函數寫到一起就是了。再在後面跟個括號，列出要導出的值構造子，用逗號隔開。如要導出所有的值構造子，那就寫個..。
+毫無疑問，你可以把你的數據型別導出到模組中。只要把你的型別與要導出的函數寫到一起就是了。再在後面跟個括號，列出要導出的值構造子，用逗號隔開。如要導出所有的值構造子，那就寫個 ``..``。
 
 若要將這裡定義的所有函數和型別都導出到一個模組中，可以這樣：
 
@@ -151,19 +153,20 @@ module Shapes
 
 一個 ``Shape`` (..)，我們就導出了 ``Shape`` 的所有值構造子。這一來無論誰導入我們的模組，都可以用 ``Rectangle`` 和 ``Circle`` 值構造子來構造 ``Shape`` 了。這與寫 ``Shape(Rectangle,Circle)`` 等價。
 
-我們可以選擇不導出任何 ``Shape`` 的值構造子，這一來使用我們模組的人就只能用輔助函數 ``baseCircle`` 和 ``baseRect`` 來得到 ``Shape`` 了。``Data.Map`` 就是這一套，沒有 ``Map.Map [(1,2),(3,4)]``，因為它沒有導出任何一個值構造子。但你可以用，像 ``Map.fromList`` 這樣的輔助函數得到 ``map``。應該記住，值構造子只是函數而已，如果不導出它們，就拒絶了使用我們模組的人呼叫它們。但可以使用其他返回該型別的函數，來取得這一型別的值。
+我們可以選擇不導出任何 ``Shape`` 的值構造子，這一來使用我們模組的人就只能用輔助函數 ``baseCircle`` 和 ``baseRect`` 來得到 ``Shape`` 了。``Data.Map`` 就是這樣，因為它沒有導出任何一個值構造子，沒辦法透過 ``Map.Map [(1,2),(3,4)]`` 建立 map。但你可以用像 ``Map.fromList`` 這樣的輔助函數得到 map。請記住，值構造子只是一個將某種型別的值作為結果傳回來的函數而已。如果不導出它們，就相當於拒絶了使用我們模組的人呼叫它們。但可以使用其他返回該型別的函數，來取得這一型別的值。
 
-不導出數據型別的值構造子隱藏了他們的內部實現，令型別的抽象度更高。同時，我們模組的使用者也就無法使用該值構造子進行模式匹配了。
+不導出數據型別的值構造子隱藏了他們的內部實現，令型別的抽象度更高。但這麼做的同時，我們模組的使用者也就無法使用該值構造子進行模式匹配了。
 
 
 
 
 ==Record Syntax
 
-OK，我們需要一個數據型別來描述一個人，得包含他的姓、名、年齡、身高、體重、電話號碼以及最愛的冰激淋。我不知你的想法，不過我覺得要瞭解一個人，這些資料就夠了。就這樣，實現出來！
+OK，我們需要一個資料型別來描述一個人，得包含他的姓、名、年齡、身高、體重、電話號碼以及最愛的冰淇淋。雖然我不知道你怎麼想的，不過我覺得要瞭解一個人，這些資料就夠了。就這樣，實現出來！
 
 {{
-data Person = Person String String Int Float String String deriving (Show)
+data Person = Person String String Int Float String String
+    deriving (Show)
 }}
 
 O~Kay，第一項是名，第二項是姓，第三項是年齡，等等。我們造一個人：
@@ -174,7 +177,7 @@ ghci> guy
 Person "Buddy" "Finklestein" 43 184.2 "526-2928" "Chocolate"
 }}
 
-貌似很酷，就是難讀了點兒。弄個函數得人的某項資料又該如何？如姓的函數，名的函數，等等。好吧，我們只能這樣：
+看起來很酷，就是難讀了點。弄個能取得人的某項資料的函數又該如何？如姓的函數，名的函數，等等。好吧，我們只能定義出這樣的函數：
 
 {{
 firstName :: Person -> String
@@ -196,7 +199,7 @@ flavor :: Person -> String
 flavor (Person _ _ _ _ _ flavor) = flavor
 }}
 
-唔，我可不願寫這樣的程式碼！雖然 it works，但也太無聊了哇。
+唔，我可不願寫這樣的程式碼！雖然這樣的程式碼寫起來很瑣碎又無趣，但的確可行。
 
 {{
 ghci> let guy = Person "Buddy" "Finklestein" 43 184.2 "526-2928" "Chocolate"
@@ -210,7 +213,7 @@ ghci> flavor guy
 
 你可能會說，一定有更好的方法！呃，抱歉，沒有。
 
-開個玩笑，其實有的，哈哈哈～Haskell 的發明者都是天才，早就料到了此類情形。他們引入了一個特殊的型別，也就是剛纔提到的更好的方法 -- *Record Syntax*。
+開個玩笑，其實有的，哈哈哈～Haskell 的發明者都是天才，早就料到了這種情形。他們設計了另一種定義資料型別的方法。下面的例子示範了如何透過 record syntax 做到我們想要的功能。
 
 {{
 data Person = Person { firstName :: String
@@ -222,7 +225,7 @@ data Person = Person { firstName :: String
                      } deriving (Show)
 }}
 
-與原先讓那些項一個挨一個的空格隔開不同，這裡用了花括號 ``{}``。先寫出項的名字，如 ``firstName``，後跟兩個冒號(也叫 Raamayim Nekudotayim，哈哈~(譯者不知道什麼意思~囧))，標明其型別，返回的數據型別仍與以前相同。這樣的好處就是，可以用函數從中直接按項取值。通過 Record Syntax，Haskell 就自動生成了這些函數：``firstName``, ``lastName``, ``age``, ``height``, ``phoneNumber`` 和 ``flavor``。
+與原先讓那些項一個挨一個的空格隔開不同，這裡用了花括號 ``{}``。先寫出項的名字，如 ``firstName``，後跟兩個冒號 ``::``（也叫 Paamayim Nekudotayim，來自希伯來語），用來標明其型別。返回的數據型別仍與以前相同。這種寫法的好處就是，可以用函數從中直接按項取值。通過 Record Syntax，Haskell 就自動生成了這些函數：``firstName``, ``lastName``, ``age``, ``height``, ``phoneNumber`` 和 ``flavor``。
 
 {{
 ghci> :t flavor
@@ -231,7 +234,7 @@ ghci> :t firstName
 firstName :: Person -> String
 }}
 
-還有個好處，就是若派生 (deriving) 到 ``Show`` 型別類，它的顯示是不同的。假如我們有個型別表示一輛車，要包含生產商、型號以及出場年份：
+還有個好處，就是若派生（deriving）到 ``Show`` 型別類，它的顯示是不同的。假如我們有個型別表示一輛車，要包含生產商、型號以及出場年份：
 
 {{
 data Car = Car String String Int deriving (Show)
@@ -255,7 +258,7 @@ Car {company = "Ford", model = "Mustang", year = 1967}
 
 這一來在造車時我們就不必關心各項的順序了。
 
-表示三維向量之類簡單數據，``Vector = Vector Int Int Int`` 就足夠明白了。但一個值構造子中若含有很多個項且不易區分，如一個人或者一輛車啥的，就應該使用 Record Syntax。
+表示三維向量之類簡單數據，``Vector = Vector Int Int Int`` 就足夠明白了。但一個值構造子中若含有很多個項且不易區分，如一個人或者一輛車啥的，就應該使用 record syntax。
 
 
 
@@ -269,11 +272,11 @@ data Maybe a = Nothing | Just a
 
 [$../img/yeti.png]
 
-這裡的a就是個型別參數。也正因為有了它，``Maybe`` 就成為了一個型別構造子。在它的值不是 ``Nothing`` 時，它的型別構造子可以搞出 ``Maybe Int``，``Maybe String`` 等等諸多型別。但只一個 ``Maybe`` 是不行的，因為它不是型別，而是型別構造子。要成為真正的型別，必須得把它需要的型別參數全部填滿。
+這裡的 ``a`` 就是個型別參數。也正因為有了它，``Maybe`` 就成為了一個型別構造子。在它的值不是 ``Nothing`` 時，它的型別構造子可以搞出 ``Maybe Int``，``Maybe String`` 等等諸多型別。但只一個 ``Maybe`` 是不行的，因為它不是型別，而是型別構造子。要成為真正的型別，必須得把它需要的型別參數全部填滿。
 
 所以，如果拿 ``Char`` 作參數交給 ``Maybe``，就可以得到一個 ``Maybe Char`` 的型別。如，``Just 'a'`` 的型別就是 ``Maybe Char``  。
 
-你可能並未察覺，在遇見 Maybe 之前我們早就接觸到型別參數了。它便是 List 型別。這裡面有點語法糖，List 型別實際上就是取一個參數來生成一個特定型別，這型別可以是 ``[Int]``，``[Char]`` 也可以是 ``[String]``，但不會跟在 ``[]`` 的後面。
+你可能並未察覺，在遇見 ``Maybe`` 之前我們早就接觸到型別參數了。它便是 List 型別。這裡面有點語法糖，List 型別實際上就是取一個參數來生成一個具體型別，而這型別可以是 ``[Int]``，``[Char]`` 也可以是 ``[String]``，但不會只是個 ``[]``。
 
 把玩一下 ``Maybe``！
 
@@ -298,7 +301,7 @@ Just 10.0
 
 注意下，``Nothing`` 的型別為 ``Maybe a``。它是多態的，若有函數取 ``Maybe Int`` 型別的參數，就一概可以傳給它一個 ``Nothing``，因為 ``Nothing`` 中不包含任何值。``Maybe a`` 型別可以有 ``Maybe Int`` 的行為，正如 ``5`` 可以是 ``Int`` 也可以是 ``Double``。與之相似，空 List 的型別是 ``[a]``，可以與一切 List 打交道。因此，我們可以 ``[1,2,3]++[]``，也可以 ``["ha","ha,","ha"]++[]``。
 
-型別參數有很多好處，但前提是用對了地方纔行。一般都是不關心型別裡面的內容，如 ``Maybe a``。一個型別的行為若有點像是容器，那麼使用型別參數會是個不錯的選擇。我們完全可以把我們的``Car``型別從
+型別參數有很多好處，但前提是用對了地方才行。一般都是不關心型別裡面的內容，如 ``Maybe a``。一個型別的行為若有點像是容器，那麼使用型別參數會是個不錯的選擇。我們完全可以把我們的``Car``型別從
 
 {{
 data Car = Car { company :: String
@@ -397,9 +400,9 @@ Vector 148 666 222
 在 [types-and-type-classes.html#Typeclasses入門 Typeclass 101] 那一節裡面，我們瞭解了 Typeclass 的基礎內容。裡面提到，型別類就是定義了某些行為的介面。例如，Int 型別是 ``Eq`` 型別類的一個 instance，``Eq`` 類就定義了判定相等性的行為。Int 值可以判斷相等性，所以 Int 就是 ``Eq`` 型別類的成員。它的真正威力體現在作為 ``Eq`` 介面的函數中，即 ``==`` 和 ``/=``。只要一個型別是 ``Eq`` 型別類的成員，我們就可以使用 ``==`` 函數來處理這一型別。這便是為何 ``4==4`` 和 ``"foo"/="bar"`` 這樣的表達式都需要作型別檢查。
 
 
-我們也曾提到，人們很容易把型別類與 Java，Python，C++ 等語言的類混淆。很多人對此都倍感不解，在原先那些語言中，類就像是藍圖，我們可以根據它來創造對象、保存狀態並執行操作。而型別類更像是介面，我們不是靠它構造數據，而是給既有的數據型別描述行為。什麼東西若可以判定相等性，我們就可以讓它成為 ``Eq`` 型別類的 instance。什麼東西若可以比較大小，那就可以讓它成為 ``Ord`` 型別類的 instance。
+我們也曾提到，人們很容易把型別類與 Java，Python，C++ 等語言的類混淆。很多人對此都倍感不解，在原先那些語言中，class 就像是藍圖，我們可以根據它來創造對象、保存狀態並執行操作。而型別類更像是介面，我們不是靠它構造數據，而是給既有的數據型別描述行為。什麼東西若可以判定相等性，我們就可以讓它成為 ``Eq`` 型別類的 instance。什麼東西若可以比較大小，那就可以讓它成為 ``Ord`` 型別類的 instance。
 
-在下一節，我們將看一下如何手工實現型別類中定義函數來構造 instance。現在呢，我們先瞭解下 Haskell 是如何自動生成這幾個型別類的 instance，``Eq``, ``Ord``, ``Enum``, ``Bounded``, ``Show``, ``Read``。只要我們在構造型別時在後面加個 ``deriving``(派生)關鍵字，Haskell 就可以自動地給我們的型別加上這些行為。
+在下一節，我們將看一下如何手工實現型別類中定義函數來構造 instance。現在呢，我們先瞭解下 Haskell 是如何自動生成這幾個型別類的 instance，``Eq``, ``Ord``, ``Enum``, ``Bounded``, ``Show``, ``Read``。只要我們在構造型別時在後面加個 ``deriving`` 關鍵字，Haskell 就可以自動地給我們的型別加上這些行為。
 
 看這個數據型別：
 
@@ -419,7 +422,7 @@ data Person = Person { firstName :: String
                      } deriving (Eq)
 }}
 
-在一個型別 derive 為 ``Eq`` 的 instance 後，就可以直接使用 ``==`` 或 ``/=`` 來判斷它們的相等性了。Haskell 會先看下這兩個值的值構造子是否一致(這裡只是單值構造子)，再用 ``==`` 來檢查其中的所有數據(必須都是 ``Eq`` 的成員)是否一致。在這裡只有 ``String`` 和 Int，所以是沒有問題的。測試下我們的 Eqinstance：
+在一個型別 derive 為 ``Eq`` 的 instance 後，就可以直接使用 ``==`` 或 ``/=`` 來判斷它們的相等性了。Haskell 會先看下這兩個值的值構造子是否一致(這裡只是單值構造子)，再用 ``==`` 來檢查其中的所有數據（必須都是 ``Eq`` 的成員）是否一致。在這裡只有 ``String`` 和 Int，所以是沒有問題的。測試一下我們的 ``Eq`` instance：
 
 {{
 ghci> let mikeD = Person {firstName = "Michael", lastName = "Diamond", age = 43}
@@ -480,7 +483,7 @@ True
 
 也可以 ``read`` 帶參數的型別，但必須填滿所有的參數。因此 ``read "Just 't'" :: Maybe a`` 是不可以的，``read "Just 't'" :: Maybe Char`` 才對。
 
-很容易想象 ``Ord`` 型別類 derive instance 的行為。首先，判斷兩個值構造子是否一致，如果是，再判斷它們的參數，前提是它們的參數都得是 ``Ord`` 的 instance。``Bool`` 型別可以有兩種值，``False`` 和 ``True``。為了瞭解在比較中程序的行為，我們可以這樣想象：
+很容易想像 ``Ord`` 型別類 derive instance 的行為。首先，判斷兩個值構造子是否一致，如果是，再判斷它們的參數，前提是它們的參數都得是 ``Ord`` 的 instance。``Bool`` 型別可以有兩種值，``False`` 和 ``True``。為了瞭解在比較中程序的行為，我們可以這樣想像：
 
 {{
 data Bool = False | True deriving (Ord)
@@ -616,7 +619,7 @@ type PhoneBook = [(Name,PhoneNumber)]
 
 Haskell 程序員給 String 加別名是為了讓函數中字串的表達方式及用途更加明確。
 
-好的，我們實現了一個函數，它可以取一名字和號碼檢查它是否存在於電話本。現在可以給它加一個相當好看明了的型別聲明：
+好的，我們實現了一個函數，它可以取一名字和號碼檢查它是否存在於電話簿。現在可以給它加一個相當好看明了的型別聲明：
 
 {{
 inPhoneBook :: Name -> PhoneNumber -> PhoneBook -> Bool
@@ -625,7 +628,7 @@ inPhoneBook name pnumber pbook = (name,pnumber) `elem` pbook
 
 [^../img/chicken.png]
 
-如果不用型別別名，我們函數的型別聲明就只能是 ``String -> String -> [(String ,String)] -> Bool`` 了。在這裡使用型別別名是為了讓型別聲明更加易讀，但你也不必拘泥于它。引入型別別名的動機既非單純表示我們函數中的既有型別，也不是為了替換掉那些重複率高的長名字型別(如 ``[(String,String)]``)，而是為了讓型別對事物的描述更加明確。
+如果不用型別別名，我們函數的型別聲明就只能是 ``String -> String -> [(String ,String)] -> Bool`` 了。在這裡使用型別別名是為了讓型別聲明更加易讀，但你也不必拘泥于它。引入型別別名的動機既非單純表示我們函數中的既有型別，也不是為了替換掉那些重複率高的長名字型別（如 ``[(String,String)]``），而是為了讓型別對事物的描述更加明確。
 
 型別別名也是可以有參數的，如果你想搞個型別來表示關聯 List，但依然要它保持通用，好讓它可以使用任意型別作 ``key`` 和 ``value``，我們可以這樣：
 
@@ -653,12 +656,13 @@ type IntMap = Map Int
 
 Oh yeah，如果要你去實現它，很可能會用個 ``qualified import`` 來導入 ``Data.Map``。這時，型別構造子前面必須得加上模組名。所以應該寫個 ``type IntMap = Map.Map Int``
 
-你得保證真正弄明白了型別構造子和值構造子的區別。我們有了個叫 ``IntMap`` 或者 ``AssocList`` 的別名並不意味着我們可以執行類似 ``AssocList [(1,2),(4,5),(7,9)]`` 的程式碼，而是可以用不同的名字來表示原先的 List，就像 ``[(1,2),(4,5),(7,9)] :: AssocList Int Int`` 讓它裡面的型別都是 Int。而像處理普通的 Tuple 構成的那種 List 處理它也是可以的。型別別名(型別依然不變)，只可以在 Haskell 的型別部分中使用，像定義新型別或型別聲明或型別註釋中跟在::後面的部分。
+你得保證真正弄明白了型別構造子和值構造子的區別。我們有了個叫 ``IntMap`` 或者 ``AssocList`` 的別名並不意味着我們可以執行類似 ``AssocList [(1,2),(4,5),(7,9)]`` 的程式碼，而是可以用不同的名字來表示原先的 List，就像 ``[(1,2),(4,5),(7,9)] :: AssocList Int Int`` 讓它裡面的型別都是 Int。而像處理普通的 Tuple 構成的那種 List 處理它也是可以的。型別別名（型別依然不變）只可以在 Haskell 的型別部分中使用。型別部分指的是定義新型別（透過 _data_ 語法與型別聲明），或是出現在 ``::`` 後面的型別註釋。
 
-另一個很酷的二參型別就是 ``Either a b`` 了，它大約是這樣定義的：
+另一個很酷的雙參數型別就是 ``Either a b`` 了，它大約是這樣定義的：
 
 {{
-data Either a b = Left a | Right b deriving (Eq, Ord, Read, Show)
+data Either a b = Left a | Right b
+    deriving (Eq, Ord, Read, Show)
 }}
 
 它有兩個值構造子。如果用了 ``Left``，那它內容的型別就是 ``a``；用了 ``Right``，那它內容的型別就是 ``b``。我們可以用它來將可能是兩種型別的值封裝起來，從裡面取值時就同時提供 ``Left`` 和 ``Right`` 的模式匹配。
@@ -674,7 +678,7 @@ ghci> :t Left True
 Left True :: Either Bool b
 }}
 
-到現在為止，``Maybe`` 是最常見的表示可能失敗的計算的型別了。但有時 ``Maybe`` 也並不是十分的好用，因為 ``Nothing`` 中包含的信息還是太少。要是我們不關心函數失敗的原因，它還是不錯的。就像 ``Data.Map`` 的 ``lookup`` 只有在搜尋的項不在 Map 時才會失敗，對此我們一清二楚。但我們若想知道函數失敗的原因，那還得使用 ``Either a b``，用 ``a`` 來表示可能的錯誤的型別，用 ``b`` 來表示一個成功運算的型別。從現在開始，錯誤一律用 ``Left`` 值構造子，而結果一律用 ``Right``。
+到現在為止，``Maybe`` 是最常見的表示可能失敗的計算的型別了。但有時 ``Maybe`` 也並不是十分的好用，因為 ``Nothing`` 中包含的資訊還是太少。要是我們不關心函數失敗的原因，它還是不錯的。就像 ``Data.Map`` 的 ``lookup`` 只有在搜尋的項不在 Map 時才會失敗，對此我們一清二楚。但我們若想知道函數失敗的原因，那還得使用 ``Either a b``，用 ``a`` 來表示可能的錯誤的型別，用 ``b`` 來表示一個成功運算的型別。從現在開始，錯誤一律用 ``Left`` 值構造子，而結果一律用 ``Right``。
 
 一個例子：有個學校提供了不少壁櫥，好給學生們地方放他們的 Gun'N'Rose 海報。每個壁櫥都有個密碼，哪個學生想用個壁櫥，就告訴管理員壁櫥的號碼，管理員就會告訴他壁櫥的密碼。但如果這個壁櫥已經讓別人用了，管理員就不能告訴他密碼了，得換一個壁櫥。我們就用 ``Data.Map`` 的一個 Map 來表示這些壁櫥，把一個號碼映射到一個表示壁櫥占用情況及密碼的 Tuple 裡。
 
@@ -688,7 +692,7 @@ type Code = String
 type LockerMap = Map.Map Int (LockerState, Code)
 }}
 
-很簡單，我們引入了一個新的型別來表示壁櫥的占用情況。併為壁櫥密碼及按號碼找壁櫥的 Map 分別設置了一個別名。好，現在我們實現這個按號碼找壁櫥的函數，就用 ``Either String Code`` 型別表示我們的結果，因為 ``lookup`` 可能會以兩種原因失敗。櫥子已經讓別人用了或者壓根就沒有這個櫥子。如果 ``lookup`` 失敗，就用字串表明失敗的原因。
+很簡單，我們引入了一個新的型別來表示壁櫥的佔用情況。並為壁櫥密碼及按號碼找壁櫥的 Map 分別設置了一個別名。好，現在我們實現這個按號碼找壁櫥的函數，就用 ``Either String Code`` 型別表示我們的結果，因為 ``lookup`` 可能會以兩種原因失敗。櫥子已經讓別人用了或者壓根就沒有這個櫥子。如果 ``lookup`` 失敗，就用字串表明失敗的原因。
 
 {{
 lockerLookup :: Int -> LockerMap -> Either String Code
@@ -776,7 +780,7 @@ infixr 5 :-:
 data List a = Empty | a :-: (List a) deriving (Show, Read, Eq, Ord)
 }}
 
-首先我們留意新的語法結構：fixity 宣告。當我們定義函數成 operator，我們能同時指定 fixity (但並不是必須的)。fixity 指定了他應該是 left-associative 或是 right-associative，還有他的優先順序。例如說，``*`` 的 fixity 是 ``infixl 7 *``，而 ``+`` 的 fixity 是 ``infixl 6``。代表他們都是 left-associative （``(4 * 3 * 2)`` 等於 ``((4 * 3) * 2)``），但 ``*`` 擁有比 ``+`` 更高的優先順序。所以 ``5 * 4 + 3`` 會是 ``(5 * 4) + 3``。
+首先我們留意新的語法結構：fixity 宣告。當我們將函數定義為運算子，我們能同時指定 fixity （但並不是必需的）。fixity 指定了他應該是左結合（left-associative）或是右結合（right-associative），還有他的優先順序。例如 ``*`` 的 fixity 是 ``infixl 7 *``，而 ``+`` 的 fixity 是 ``infixl 6``。代表他們都是左結合（``(4 * 3 * 2)`` 等於 ``((4 * 3) * 2)``），但 ``*`` 擁有比 ``+`` 更高的優先順序。所以 ``5 * 4 + 3`` 會是 ``(5 * 4) + 3``。
 
 這樣我們就可以寫成 ``a :-: (List a)`` 而不是 ``Cons a (List a)``：
 
@@ -866,7 +870,7 @@ treeElem x (Node a left right)
     | x > a  = treeElem x right
 }}
 
-我們要作的就是把之前段落所描述的事轉換成程式碼。首先我們不想手動一個個來創造一棵樹。我們想用一個 ``fold`` 來從一個 List 創造一棵樹。要知道走遍一個 List 並回傳某種值的操作都可以用 ``fold`` 來實現。我們先從一棵空的樹開始，然後從右邊走過 List的 每一個元素，一個一個丟到樹裡面。
+我們要作的就是把之前段落所描述的事轉換成程式碼。首先我們不想手動一個個來創造一棵樹。我們想用一個 ``fold`` 來從一個 List 創造一棵樹。要知道走遍一個 List 並回傳某種值的操作都可以用 ``fold`` 來實現。我們先從一棵空的樹開始，然後從右邊走過 List 的每一個元素，一個一個丟到樹裡面。
 
 {{
 ghci> let nums = [8,6,4,1,7,3,5]
@@ -953,7 +957,7 @@ instance Eq TrafficLight where
 我們使用了 ``instance`` 這個關鍵字。class 是用來定義新的 typeclass，而 instance 是用來說明我們要定義某個 typeclass 的 instance。當我們要定義 ``Eq``，我們會寫 ``class Eq a where``，其中 ``a`` 代表任何型態。我們可以從 instance 的寫法：``instance Eq TrafficLight where`` 看出來。我們會把 ``a`` 換成實際的型別。
 
 
-由於 ``==`` 是用 ``/=`` 來定義的，同樣的 ``/=`` 也是用 ``==`` 來定義。所以我們只需要在 instance 定義中複寫其中一個就好了。我們這樣叫做定義了一個 minimal complete definition。這是說能讓型別符合 class 行為所最小需要實作的函數數量。而 ``Eq`` 的 minimal complete definition 需要 ``==`` 或 ``/=`` 其中一個。而如果 ``Eq`` 是這樣定義的：
+由於 ``==`` 是用 ``/=`` 來定義的，同樣的 ``/=`` 也是用 ``==`` 來定義。所以我們只需要在 instance 定義中覆寫其中一個就好了。這叫做 minimal complete definition，也就是能讓型別符合 class 行為所需實作的最少函數。而 ``Eq`` 的 minimal complete definition 需要 ``==`` 或 ``/=`` 其中一個。如果 ``Eq`` 是這樣定義的：
 
 
 {{
@@ -1053,7 +1057,7 @@ instance (Eq m) => Eq (Maybe m) where
 
 這邊我們必須要加上限制。在這個 instance 的宣告中，我們希望所有 ``Maybe m`` 形式的型別都屬於 ``Eq``，但只有當 ``m`` 也屬於 ``Eq`` 的時候。這也是 Haskell 在 derive 的時候做的事。
 
-在大部份情形下，在 typeclass 宣告中的 class constraints 都是要讓一個 typeclass 成為另一個 typeclass 的 subclass。而在 instance 宣告中的 class constraint 則是要表達型別的要求限制。舉裡來說，我們要求 ``Maybe`` 的內容物也要屬於 ``Eq``。
+在大部份情形下，在 typeclass 宣告中的 class constraints 都是要讓一個 typeclass 成為另一個 typeclass 的 subclass。而在 instance 宣告中的 class constraint 則是要表達型別的要求限制。舉例來說，我們要求 ``Maybe`` 的內容物也要屬於 ``Eq``。
 
 當定義 instance 的時候，如果你需要提供具體型別（像是在 ``a -> a -> Bool`` 中的 ``a``），那你必須要加上括號跟型別參數來構造一個具體型別。
 
@@ -1074,7 +1078,7 @@ instance (Eq m) => Eq (Maybe m) where
 ``if (false) alert("YEAH") else alert("NO!)`` 等等，
 而上述所有的片段執行後都會跳出 ``NO!``。如果你寫 ``if ("WHAT") alert ("YEAH") else alert("NO!")``，他會跳出 ``YEAH!``，因為 Javascript 認為非空字串會是 true。
 
-儘管使用 ``Bool`` 來表達布林的語意是比較好的作法。為了有趣起見，我們來試試看模仿 Javascript 的行為。我們先從 typeclass 宣告開始看：
+儘管使用 ``Bool`` 來表達布林的語意是比較好的作法。為了增加一些樂趣，我們來試著模仿 Javascript 的行為。先從 typeclass 宣告開始看：
 
 {{
 class YesNo a where
@@ -1100,7 +1104,7 @@ instance YesNo [a] where
     yesno _ = True
 }}
 
-留意到我們加了一個型別參數 ``a`` 來讓整個 List 是一個具體型別，不過我們並沒有對包涵在 List 中的元素的型別做任何額外假設。我們還剩下 ``Bool`` 可以被作為真假值，要定義他們也很容易：
+留意到我們加了一個型別參數 ``a`` 來讓整個 List 是一個具體型別，不過我們並沒有對包含在 List 中的元素的型別做任何額外假設。我們還剩下 ``Bool`` 可以被作為真假值，要定義他們也很容易：
 
 {{
 instance YesNo Bool where
@@ -1250,7 +1254,7 @@ Nothing
 }}
 
 
-另外 ``Tree a`` 的型別也可以被 map over 且被定義成 ``Functor`` 的一個 instnace。他可以被想成是一個盒子，而 ``Tree`` 的型別構造子也剛好接受單一一個型別參數。如果你把 ``fmap`` 看作是一個特別為 ``Tree`` 寫的函數，他的型別宣告會長得像這樣 ``(a -> b) -> Tree a -> Tree b``。不過我們在這邊會用到遞迴。map over 一棵空的樹會得到一棵空的樹。map over 一棵非空的樹會得到一棵被函數映射過的樹，他的 root 會先被映射，然後左右子樹都分別遞迴地被函數映射。
+另外 ``Tree a`` 的型別也可以被 map over 且被定義成 ``Functor`` 的一個 instnace。他可以被想成是一個盒子，而 ``Tree`` 的型別構造子也剛好接受單一一個型別參數。如果你把 ``fmap`` 看作是一個特別為 ``Tree`` 寫的函數，他的型別宣告會長得像這樣 ``(a -> b) -> Tree a -> Tree b``。不過我們在這邊會用到遞迴。map over 一棵空的樹會得到一棵空的樹。map over 一棵非空的樹會得到一棵被函數映射過的樹，他的根節點（root）會先被映射，然後左右子樹都分別遞迴地被函數映射。
 
 {{
 instance Functor Tree where
